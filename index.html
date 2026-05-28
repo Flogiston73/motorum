@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>МОТОРУМ | Эндуро мототехника</title>
+    <!-- EmailJS library -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -37,7 +39,7 @@
             background: rgba(5,5,5,0.96);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255,140,0,0.3);
-            padding: 8px 16px;
+            padding: 10px 16px;
         }
 
         .nav-container {
@@ -47,11 +49,11 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
         }
 
         .nav-logo {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: 3px;
             color: #FF8C00;
@@ -64,7 +66,7 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .nav-links a, .cart-icon, .user-icon {
@@ -101,11 +103,25 @@
             position: relative;
             z-index: 10;
             max-width: 1300px;
-            margin: 100px auto 40px;
+            margin: 95px auto 40px;
             padding: 0 16px 40px;
         }
 
-        /* ===== HERO: подпись строго под логотипом, центрирована ===== */
+        @media (max-width: 600px) {
+            .main-content {
+                margin-top: 130px;
+            }
+            .nav-container {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+        }
+
+        /* ===== HERO: подпись строго под логотипом ===== */
         .hero {
             text-align: center;
             margin-bottom: 30px;
@@ -120,7 +136,7 @@
         }
         .motorum-letter {
             display: inline-block;
-            font-size: clamp(2.8rem, 10vw, 6rem);
+            font-size: clamp(3rem, 12vw, 7rem);
             font-weight: 700;
             text-transform: uppercase;
             font-family: 'Anton', 'Bebas Neue', sans-serif;
@@ -176,7 +192,7 @@
             background: transparent;
             border: 2px solid #FF8C00;
             color: #fff;
-            padding: 10px 28px;
+            padding: 12px 32px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -184,7 +200,7 @@
         .btn-moto:hover { background: #FF8C00; color: #000; }
         .work-hours {
             background: rgba(0,0,0,0.7);
-            padding: 8px 20px;
+            padding: 10px 20px;
             display: inline-flex;
             flex-wrap: wrap;
             gap: 12px;
@@ -293,47 +309,16 @@
         .price-badge { font-size: 1.8rem; text-align: center; color: #FF8C00; background: rgba(255,140,0,0.1); padding: 8px; border-radius: 40px; margin: 15px 0; }
         .button-group { display: flex; gap: 15px; justify-content: center; margin: 20px 0; }
         .cart-btn, .buy-btn { background: #FF8C00; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 700; cursor: pointer; }
-
-        /* Каталог - улучшенная сетка и шрифты */
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-        .catalog-item {
-            background: rgba(255,140,0,0.05);
-            border: 1px solid rgba(255,140,0,0.3);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 20px; margin-top: 20px; }
+        .catalog-item { background: rgba(255,140,0,0.05); border: 1px solid rgba(255,140,0,0.3); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
         .catalog-item:hover { transform: translateY(-4px); border-color: #FF8C00; }
-        .catalog-item h4 {
-            color: #FF8C00;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-        }
-        .catalog-price {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin: 12px 0;
-            color: #FF8C00;
-        }
-        .add-to-cart {
-            background: #FF8C00;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        /* Корзина: кнопки + и - оранжевые */
+        .catalog-item h4 { color: #FF8C00; margin-bottom: 8px; }
+        .catalog-item h4 .brand { text-transform: lowercase; }
+        .catalog-item h4 .brand::first-letter { text-transform: uppercase; }
+        .catalog-item h4 .model { text-transform: uppercase; }
+        .catalog-price { font-size: 1.2rem; font-weight: bold; margin: 10px 0; color: #FF8C00; }
+        .add-to-cart { background: #FF8C00; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 600; cursor: pointer; }
+        /* Корзина */
         .cart-item {
             display: flex;
             flex-wrap: wrap;
@@ -343,6 +328,9 @@
             padding: 12px 0;
             gap: 10px;
         }
+        .cart-item-info { flex: 2; min-width: 150px; }
+        .cart-item-price { flex: 1; text-align: right; min-width: 80px; }
+        .cart-item-actions { display: flex; gap: 8px; }
         .cart-remove {
             background: transparent;
             border: 1px solid #FF8C00;
@@ -350,15 +338,13 @@
             padding: 4px 12px;
             border-radius: 20px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 0.9rem;
         }
         .cart-remove:hover { background: rgba(255,140,0,0.2); }
-
-        /* Формы */
+        .cart-total { margin-top: 15px; padding-top: 15px; border-top: 2px solid #FF8C00; text-align: right; font-size: 1.2rem; color: #FF8C00; }
         .form-group { margin-bottom: 15px; }
         .form-group input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #FF8C00; border-radius: 8px; color: #fff; font-size: 1rem; }
         .submit-btn { background: #FF8C00; border: none; padding: 10px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; }
-
         .mud-tracks {
             position: fixed;
             bottom: 0;
@@ -367,16 +353,6 @@
             height: 40px;
             background: repeating-linear-gradient(45deg, rgba(60,35,15,0.3) 0px, rgba(60,35,15,0.3) 12px, transparent 12px, transparent 24px);
             pointer-events: none;
-        }
-
-        @media (max-width: 700px) {
-            .nav-container { flex-direction: column; align-items: stretch; text-align: center; }
-            .nav-links { justify-content: center; }
-            .main-content { margin-top: 130px; } /* больше отступ, чтобы шапка не наезжала */
-        }
-        @media (max-width: 480px) {
-            .main-content { margin-top: 150px; }
-            .motorum-letter { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -389,6 +365,7 @@
             <div class="nav-links">
                 <a href="#" id="homeLinkNav">Главная</a>
                 <a href="#" id="catalogLink">Каталог</a>
+                <a href="#" id="servicesLink">Услуги</a>
                 <a href="#" id="eventsLink">События</a>
                 <a href="#" id="aboutLink">О компании</a>
                 <a href="#" id="deliveryLink">Доставка</a>
@@ -412,149 +389,64 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНЫЕ ОКНА (базовые) -->
+    <!-- МОДАЛЬНЫЕ ОКНА -->
     <div id="cartModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="cartModal">&times;</div><div class="modal-title">🛒 КОРЗИНА</div><div id="cartItemsContainer"></div></div></div>
     <div id="catalogModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="catalogModal">&times;</div><div class="modal-title">📚 КАТАЛОГ МОТОТЕХНИКИ</div><div id="catalogGrid" class="catalog-grid"></div></div></div>
     <div id="eventsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="eventsModal">&times;</div><div class="modal-title">🏁 СОБЫТИЯ</div><div id="eventsList"></div></div></div>
     <div id="userModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="userModal">&times;</div><div class="modal-title">ВХОД / РЕГИСТРАЦИЯ</div><div id="userContent"></div></div></div>
     <div id="callbackModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="callbackModal">&times;</div><div class="modal-title">📞 ЗАКАЗАТЬ ЗВОНОК</div><form id="callbackFormFixed"><div class="form-group"><label>Имя</label><input type="text" id="callbackNameFixed" required></div><div class="form-group"><label>Телефон</label><input type="tel" id="callbackPhoneFixed" required></div><div class="form-group"><label>Удобное время</label><input type="text" id="callbackTimeFixed"></div><button type="submit" class="submit-btn">ОТПРАВИТЬ</button></form></div></div>
+    <div id="aboutModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="aboutModal">&times;</div><div class="modal-title">МОТОРУМ — место силы</div><div class="modal-text">Мотосалон нового формата. Адрес: д. Тарасково, Центральная ул., с1А. График: Ср–Вс 10:30–19:30. Тел: +7 977 465-79-72.</div></div></div>
+    <div id="deliveryModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="deliveryModal">&times;</div><div class="modal-title">ДОСТАВКА</div><div class="modal-text">📍 По Москве в пределах МКАД — БЕСПЛАТНО!<br>📍 По России — по договоренности при 100% предоплате.</div></div></div>
+    <div id="contactsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="contactsModal">&times;</div><div class="modal-title">КОНТАКТЫ</div><div>📞 +7 977 465-79-72</div><div>📍 д. Тарасково, Центральная ул., с1А</div><div>🕐 Ср-Вс 10:30–19:30</div><div>📱 Telegram: <a href="https://t.me/motorum_official" target="_blank" style="color:#FF8C00;">@motorum_official</a></div></div></div>
+    <div id="servicesModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="servicesModal">&times;</div><div class="modal-title">🛠 НАШИ УСЛУГИ</div><div class="modal-text">Мы предоставляем полный спектр услуг для вашего мотоцикла:</div><ul style="margin-left: 20px; color:#ccc;"><li>🚚 Доставка мототехники по Москве и области</li><li>🔧 Профессиональная сборка и предпродажная подготовка</li><li>📋 Помощь в постановке на учёт в ГИБДД</li><li>🛠 Консультации по выбору и обслуживанию</li></ul><div class="modal-text" style="margin-top:15px;">Звоните: +7 977 465-79-72</div></div></div>
 
-    <!-- О КОМПАНИИ, ДОСТАВКА, КОНТАКТЫ (кратко) -->
-    <div id="aboutModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="aboutModal">&times;</div><div class="modal-title">МОТОРУМ — место силы</div><div class="modal-text">Мотосалон нового формата. Адрес: д. Тарасково, Центральная ул., с1А. График: Ср–Вс 10:30–19:30. Тел: 8 977 465-79-72.</div></div></div>
-    <div id="deliveryModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="deliveryModal">&times;</div><div class="modal-title">ДОСТАВКА</div><div class="modal-text">По Москве в пределах МКАД бесплатно. По России бесплатно при 100% предоплате.</div></div></div>
-    <div id="contactsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="contactsModal">&times;</div><div class="modal-title">КОНТАКТЫ</div><div>📞 8 977 465-79-72</div><div>📍 д. Тарасково, Центральная ул., с1А</div><div>🕐 Ср-Вс 10:30–19:30</div></div></div>
-
-    <!-- КАРТОЧКИ ТОВАРОВ С ПОЛНЫМИ ХАРАКТЕРИСТИКАМИ И ПРАВИЛЬНЫМИ НАЗВАНИЯМИ -->
-    <!-- Six Days: Regulmoto SIX DAYS -->
+    <!-- КАРТОЧКИ ТОВАРОВ -->
     <div id="sixDaysModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="sixDaysModal">&times;</div>
-            <div class="modal-title">🏍️ Regulmoto SIX DAYS</div>
+            <div class="modal-title">🏍️ REGULMOTO SIX DAYS</div>
             <div class="price-badge">🔥 Цена: 349 000 ₽ 🔥</div>
-            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО ВСЕЙ РОССИИ — БЕСПЛАТНО!</strong><br>✔️ При 100% предоплате<br>✔️ Отправляем удобными для вас транспортными компаниями, в заводской упаковке.</div>
+            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО!</strong><br>✔️ При 100% предоплате<br>✔️ Отправляем удобными для вас транспортными компаниями, в заводской упаковке.</div>
             <div class="modal-text"><strong>🏍️ ☘ МОТОРУМ — мотосалон нового формата ☘ 🏍️</strong><br>💼 Мы не держим лишних позиций и не навязываем остатки. Вы сами выбираете, что вам нужно.</div>
             <div class="modal-text"><strong>🛒 Продажа в салоне и дистанционно 🤝</strong><br>🚚 Доставим до удобной ТК. Покупаете онлайн — забираете в коробке по всей России.</div>
             <div class="modal-text"><strong>📄 Полный пакет документов:</strong> электронный ПТС, договор купли-продажи, сервисная книжка.</div>
             <div class="modal-text"><strong>ДЛЯ МОТОЦИКЛА ТРЕБУЕТСЯ КАТЕГОРИЯ "А"</strong><br>⭐ Новинка 2025 года ⭐<br>🔥 НОВЫЙ! В наличии, в нашем мотосалоне. 🔥</div>
             <div class="modal-subtitle">📋 ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ</div>
-            <div class="specs-grid">
-                <div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div>
-                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 куб.см.</span></div>
-                <div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">31 л.с.</span></div>
-                <div class="spec-item"><span class="spec-label">Тактность</span><span class="spec-value">4-х тактный</span></div>
-                <div class="spec-item"><span class="spec-label">Балансировочный вал</span><span class="spec-value">есть</span></div>
-                <div class="spec-item"><span class="spec-label">Система охлаждения</span><span class="spec-value">Жидкостное</span></div>
-                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ступеней</span></div>
-                <div class="spec-item"><span class="spec-label">Система запуска</span><span class="spec-value">Электро</span></div>
-                <div class="spec-item"><span class="spec-label">Трансмиссия</span><span class="spec-value">Механическая</span></div>
-                <div class="spec-item"><span class="spec-label">Система подачи топлива</span><span class="spec-value">NIBBI Racing PWK34</span></div>
-                <div class="spec-item"><span class="spec-label">Зажигание</span><span class="spec-value">CDI</span></div>
-                <div class="spec-item"><span class="spec-label">Передние тормоза</span><span class="spec-value">Дисковый, гидравлический 2-х поршневой</span></div>
-                <div class="spec-item"><span class="spec-label">Задние тормоза</span><span class="spec-value">Дисковый, гидравлический 1 поршневой</span></div>
-                <div class="spec-item"><span class="spec-label">Передняя подвеска</span><span class="spec-value">Перевернутого типа 915мм, зеркало 48мм</span></div>
-                <div class="spec-item"><span class="spec-label">Задняя подвеска</span><span class="spec-value">Моноамортизатор</span></div>
-                <div class="spec-item"><span class="spec-label">Переднее колесо</span><span class="spec-value">R 21 90/90</span></div>
-                <div class="spec-item"><span class="spec-label">Заднее колесо</span><span class="spec-value">R 18 120/90</span></div>
-                <div class="spec-item"><span class="spec-label">Объем топливного бака</span><span class="spec-value">9 л.</span></div>
-                <div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">125 кг</span></div>
-                <div class="spec-item"><span class="spec-label">Максимальная нагрузка</span><span class="spec-value">150 кг</span></div>
-                <div class="spec-item"><span class="spec-label">Колесная база</span><span class="spec-value">1480 мм</span></div>
-                <div class="spec-item"><span class="spec-label">Высота по седлу</span><span class="spec-value">930 мм</span></div>
-                <div class="spec-item"><span class="spec-label">Габариты (Д×Ш×В)</span><span class="spec-value">1610×460×885 мм</span></div>
-            </div>
-            <div class="shop-card"><div class="modal-text"><strong>🏪 НАШ УЮТНЫЙ САЛОН МОТОРУМ</strong></div><div class="modal-text">📍 Московская область, Наро-Фоминский г.о., д. Тарасково, Центральная ул., с1А</div><div class="modal-text">📅 График работы: Ср, Чт, Пт, Сб, Вс: с 10:30 до 19:30<br>Пн, Вт — выходные</div><div class="modal-text">📞 Телефон: <strong>8 977 465-79-72</strong></div></div>
-            <div class="button-group">
-                <button class="cart-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">🛒 В КОРЗИНУ</button>
-                <button class="buy-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">💳 КУПИТЬ СЕЙЧАС</button>
-            </div>
+            <div class="specs-grid"><div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div><div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 куб.см.</span></div><div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">31 л.с.</span></div><div class="spec-item"><span class="spec-label">Тактность</span><span class="spec-value">4-х тактный</span></div><div class="spec-item"><span class="spec-label">Балансировочный вал</span><span class="spec-value">есть</span></div><div class="spec-item"><span class="spec-label">Система охлаждения</span><span class="spec-value">Жидкостное</span></div><div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ступеней</span></div><div class="spec-item"><span class="spec-label">Система запуска</span><span class="spec-value">Электро</span></div><div class="spec-item"><span class="spec-label">Трансмиссия</span><span class="spec-value">Механическая</span></div><div class="spec-item"><span class="spec-label">Система подачи топлива</span><span class="spec-value">NIBBI Racing PWK34</span></div><div class="spec-item"><span class="spec-label">Зажигание</span><span class="spec-value">CDI</span></div><div class="spec-item"><span class="spec-label">Передние тормоза</span><span class="spec-value">Дисковый, гидравлический 2-х поршневой</span></div><div class="spec-item"><span class="spec-label">Задние тормоза</span><span class="spec-value">Дисковый, гидравлический 1 поршневой</span></div><div class="spec-item"><span class="spec-label">Передняя подвеска</span><span class="spec-value">Перевернутого типа 915мм, зеркало 48мм</span></div><div class="spec-item"><span class="spec-label">Задняя подвеска</span><span class="spec-value">Моноамортизатор</span></div><div class="spec-item"><span class="spec-label">Переднее колесо</span><span class="spec-value">R 21 90/90</span></div><div class="spec-item"><span class="spec-label">Заднее колесо</span><span class="spec-value">R 18 120/90</span></div><div class="spec-item"><span class="spec-label">Объем топливного бака</span><span class="spec-value">9 л.</span></div><div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">125 кг</span></div><div class="spec-item"><span class="spec-label">Максимальная нагрузка</span><span class="spec-value">150 кг</span></div><div class="spec-item"><span class="spec-label">Колесная база</span><span class="spec-value">1480 мм</span></div><div class="spec-item"><span class="spec-label">Высота по седлу</span><span class="spec-value">930 мм</span></div><div class="spec-item"><span class="spec-label">Габариты (Д×Ш×В)</span><span class="spec-value">1610×460×885 мм</span></div></div>
+            <div class="shop-card"><div class="modal-text"><strong>🏪 НАШ УЮТНЫЙ САЛОН МОТОРУМ</strong></div><div class="modal-text">📍 Московская область, Наро-Фоминский г.о., д. Тарасково, Центральная ул., с1А</div><div class="modal-text">📅 График работы: Ср, Чт, Пт, Сб, Вс: с 10:30 до 19:30<br>Пн, Вт — выходные</div><div class="modal-text">📞 Телефон: <strong>+7 977 465-79-72</strong></div></div>
+            <div class="button-group"><button class="cart-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">🛒 В КОРЗИНУ</button><button class="buy-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">💳 КУПИТЬ СЕЙЧАС</button></div>
         </div>
     </div>
-
-    <!-- Crosstrec: Regulmoto CROSSTREC NB350 -->
     <div id="crosstrecModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="crosstrecModal">&times;</div>
-            <div class="modal-title">🏍️ Regulmoto CROSSTREC NB350</div>
+            <div class="modal-title">🏍️ REGULMOTO CROSSTREC NB350</div>
             <div class="price-badge">🔥 Цена: 331 000 ₽ 🔥</div>
-            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО ВСЕЙ РОССИИ — БЕСПЛАТНО!</strong><br>✔️ При 100% предоплате<br>✔️ Отправляем удобными для вас транспортными компаниями, в заводской упаковке.</div>
+            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО!</strong><br>✔️ При 100% предоплате<br>✔️ Отправляем удобными для вас транспортными компаниями, в заводской упаковке.</div>
             <div class="modal-text"><strong>🏍️ ☘ МОТОРУМ — мотосалон нового формата ☘ 🏍️</strong><br>💼 Мы не держим лишних позиций и не навязываем остатки. Вы сами выбираете, что вам нужно.</div>
             <div class="modal-text"><strong>🛒 Продажа в салоне и дистанционно online 🤝</strong><br>🚚 Мы просто доставим ваш мотоцикл до удобной вам транспортной компании.</div>
             <div class="modal-text"><strong>📄 При покупке мотоцикла мы предоставляем полный пакет документов:</strong> электронный ПТС, договор купли-продажи, и сервисную книжку.</div>
             <div class="modal-text"><strong>ДЛЯ МОТОЦИКЛА ТРЕБУЕТСЯ КАТЕГОРИЯ "А"</strong><br>⭐ Новинка 2026 года ⭐<br>🔥 НОВЫЙ! В наличии, в нашем мотосалоне. 🔥</div>
             <div class="modal-subtitle">📋 ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ</div>
-            <div class="specs-grid">
-                <div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div>
-                <div class="spec-item"><span class="spec-label">Объем двигателя</span><span class="spec-value">315 куб.см.</span></div>
-                <div class="spec-item"><span class="spec-label">Количество цилиндров</span><span class="spec-value">1</span></div>
-                <div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">32 л.с.</span></div>
-                <div class="spec-item"><span class="spec-label">Тактность</span><span class="spec-value">4-х тактный</span></div>
-                <div class="spec-item"><span class="spec-label">Балансировочный вал</span><span class="spec-value">есть</span></div>
-                <div class="spec-item"><span class="spec-label">Система охлаждения</span><span class="spec-value">Воздушная</span></div>
-                <div class="spec-item"><span class="spec-label">Количество скоростей</span><span class="spec-value">6</span></div>
-                <div class="spec-item"><span class="spec-label">Система запуска</span><span class="spec-value">Электро</span></div>
-                <div class="spec-item"><span class="spec-label">Трансмиссия</span><span class="spec-value">Механическая</span></div>
-                <div class="spec-item"><span class="spec-label">Система подачи топлива</span><span class="spec-value">NIBBI Racing PWK34</span></div>
-                <div class="spec-item"><span class="spec-label">Зажигание</span><span class="spec-value">CDI</span></div>
-                <div class="spec-item"><span class="spec-label">Передние тормоза</span><span class="spec-value">Дисковый, гидравлический 2-х поршневой суппорт</span></div>
-                <div class="spec-item"><span class="spec-label">Задние тормоза</span><span class="spec-value">Дисковый</span></div>
-                <div class="spec-item"><span class="spec-label">Передняя подвеска</span><span class="spec-value">Перевернутого типа 915мм с регулировками, зеркало 48мм</span></div>
-                <div class="spec-item"><span class="spec-label">Задняя подвеска</span><span class="spec-value">Моно амортизатором, 480 мм, с регулировкой сжатия и отбоя</span></div>
-                <div class="spec-item"><span class="spec-label">Переднее колесо</span><span class="spec-value">R 21 80/100-21</span></div>
-                <div class="spec-item"><span class="spec-label">Заднее колесо</span><span class="spec-value">R 18 120/90-18</span></div>
-                <div class="spec-item"><span class="spec-label">Объем топливного бака</span><span class="spec-value">9 л.</span></div>
-                <div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">127 кг</span></div>
-                <div class="spec-item"><span class="spec-label">Максимальная нагрузка</span><span class="spec-value">150 кг</span></div>
-                <div class="spec-item"><span class="spec-label">Колесная база</span><span class="spec-value">1500 мм</span></div>
-                <div class="spec-item"><span class="spec-label">Высота по седлу</span><span class="spec-value">950 мм</span></div>
-                <div class="spec-item"><span class="spec-label">Габариты (Д×Ш×В)</span><span class="spec-value">2150×900×1300 мм</span></div>
-                <div class="spec-item"><span class="spec-label">Габариты в коробке</span><span class="spec-value">1610×460×885 мм</span></div>
-            </div>
-            <div class="shop-card"><div class="modal-text"><strong>🏪 НАШ УЮТНЫЙ САЛОН МОТОРУМ</strong></div><div class="modal-text">📍 Московская область, Наро-Фоминский г.о., д. Тарасково, Центральная ул., с1А</div><div class="modal-text">📅 График работы: Ср, Чт, Пт, Сб, Вс: с 10:30 до 19:30<br>Пн, Вт — выходные</div><div class="modal-text">📞 Телефон: <strong>8 977 465-79-72</strong></div></div>
-            <div class="button-group">
-                <button class="cart-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">🛒 В КОРЗИНУ</button>
-                <button class="buy-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">💳 КУПИТЬ СЕЙЧАС</button>
-            </div>
+            <div class="specs-grid"><div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div><div class="spec-item"><span class="spec-label">Объем двигателя</span><span class="spec-value">315 куб.см.</span></div><div class="spec-item"><span class="spec-label">Количество цилиндров</span><span class="spec-value">1</span></div><div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">32 л.с.</span></div><div class="spec-item"><span class="spec-label">Тактность</span><span class="spec-value">4-х тактный</span></div><div class="spec-item"><span class="spec-label">Балансировочный вал</span><span class="spec-value">есть</span></div><div class="spec-item"><span class="spec-label">Система охлаждения</span><span class="spec-value">Воздушная</span></div><div class="spec-item"><span class="spec-label">Количество скоростей</span><span class="spec-value">6</span></div><div class="spec-item"><span class="spec-label">Система запуска</span><span class="spec-value">Электро</span></div><div class="spec-item"><span class="spec-label">Трансмиссия</span><span class="spec-value">Механическая</span></div><div class="spec-item"><span class="spec-label">Система подачи топлива</span><span class="spec-value">NIBBI Racing PWK34</span></div><div class="spec-item"><span class="spec-label">Зажигание</span><span class="spec-value">CDI</span></div><div class="spec-item"><span class="spec-label">Передние тормоза</span><span class="spec-value">Дисковый, гидравлический 2-х поршневой суппорт</span></div><div class="spec-item"><span class="spec-label">Задние тормоза</span><span class="spec-value">Дисковый</span></div><div class="spec-item"><span class="spec-label">Передняя подвеска</span><span class="spec-value">Перевернутого типа 915мм с регулировками, зеркало 48мм</span></div><div class="spec-item"><span class="spec-label">Задняя подвеска</span><span class="spec-value">Моно амортизатором, 480 мм, с регулировкой сжатия и отбоя</span></div><div class="spec-item"><span class="spec-label">Переднее колесо</span><span class="spec-value">R 21 80/100-21</span></div><div class="spec-item"><span class="spec-label">Заднее колесо</span><span class="spec-value">R 18 120/90-18</span></div><div class="spec-item"><span class="spec-label">Объем топливного бака</span><span class="spec-value">9 л.</span></div><div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">127 кг</span></div><div class="spec-item"><span class="spec-label">Максимальная нагрузка</span><span class="spec-value">150 кг</span></div><div class="spec-item"><span class="spec-label">Колесная база</span><span class="spec-value">1500 мм</span></div><div class="spec-item"><span class="spec-label">Высота по седлу</span><span class="spec-value">950 мм</span></div><div class="spec-item"><span class="spec-label">Габариты (Д×Ш×В)</span><span class="spec-value">2150×900×1300 мм</span></div><div class="spec-item"><span class="spec-label">Габариты в коробке</span><span class="spec-value">1610×460×885 мм</span></div></div>
+            <div class="shop-card"><div class="modal-text"><strong>🏪 НАШ УЮТНЫЙ САЛОН МОТОРУМ</strong></div><div class="modal-text">📍 Московская область, Наро-Фоминский г.о., д. Тарасково, Центральная ул., с1А</div><div class="modal-text">📅 График работы: Ср, Чт, Пт, Сб, Вс: с 10:30 до 19:30<br>Пн, Вт — выходные</div><div class="modal-text">📞 Телефон: <strong>+7 977 465-79-72</strong></div></div>
+            <div class="button-group"><button class="cart-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">🛒 В КОРЗИНУ</button><button class="buy-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">💳 КУПИТЬ СЕЙЧАС</button></div>
         </div>
     </div>
-
-    <!-- Spitfire: Regulmoto SPITFIRE 17/14 -->
     <div id="spitfireModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="spitfireModal">&times;</div>
-            <div class="modal-title">🔥 Regulmoto SPITFIRE 17/14</div>
+            <div class="modal-title">🔥 ПИТБАЙК REGULMOTO SPITFIRE 17/14</div>
             <div class="price-badge">🔥 Цена: 105 000 ₽ 🔥</div>
-            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО ВСЕЙ РОССИИ — БЕСПЛАТНО!</strong><br>✔️ При 100% предоплате<br>✔️ Отправляем удобными для вас транспортными компаниями, в заводской упаковке.</div>
+            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО!</strong><br>✔️ При 100% предоплате<br>✔️ Отправляем удобными для вас транспортными компаниями, в заводской упаковке.</div>
             <div class="modal-text"><strong>🏍️ ☘ МОТОРУМ — мотосалон нового формата ☘ 🏍️</strong><br>💼 Мы не держим лишних позиций и не навязываем остатки.</div>
             <div class="modal-text"><strong>🛒 Продажа в салоне и дистанционно 🤝</strong><br>🚚 Мы просто доставим ваш мотоцикл до удобной вам транспортной компании.</div>
             <div class="modal-text"><strong>📄 При покупке мотоцикла мы предоставляем полный пакет документов:</strong> электронный ПТС, договор купли-продажи, и сервисную книжку.</div>
             <div class="modal-text"><strong>СПОРТИНВЕНТАРЬ!!!</strong><br>ДЛЯ МОТОЦИКЛА НЕ ТРЕБУЕТСЯ КАТЕГОРИЯ "А"<br>⭐ Новинка 2025 года ⭐<br>🔥 НОВЫЙ! В наличии, в нашем мотосалоне. 🔥</div>
             <div class="modal-subtitle">📋 ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ</div>
-            <div class="specs-grid">
-                <div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">139FMB</span></div>
-                <div class="spec-item"><span class="spec-label">Объем двигателя</span><span class="spec-value">49 куб.см.</span></div>
-                <div class="spec-item"><span class="spec-label">Количество цилиндров</span><span class="spec-value">1</span></div>
-                <div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">2,2 л.с.</span></div>
-                <div class="spec-item"><span class="spec-label">Тактность</span><span class="spec-value">4-х тактный</span></div>
-                <div class="spec-item"><span class="spec-label">Балансировочный вал</span><span class="spec-value">нет</span></div>
-                <div class="spec-item"><span class="spec-label">Система охлаждения</span><span class="spec-value">Воздушная</span></div>
-                <div class="spec-item"><span class="spec-label">Количество скоростей</span><span class="spec-value">6</span></div>
-                <div class="spec-item"><span class="spec-label">Система запуска</span><span class="spec-value">Электро/кикстартер</span></div>
-                <div class="spec-item"><span class="spec-label">Трансмиссия</span><span class="spec-value">Механическая</span></div>
-                <div class="spec-item"><span class="spec-label">Система подачи топлива</span><span class="spec-value">NIBBI Racing PE19</span></div>
-                <div class="spec-item"><span class="spec-label">Зажигание</span><span class="spec-value">CDI</span></div>
-                <div class="spec-item"><span class="spec-label">Передние тормоза</span><span class="spec-value">Диск 220мм, двухпоршневой суппорт</span></div>
-                <div class="spec-item"><span class="spec-label">Задние тормоза</span><span class="spec-value">Дисковый 190мм, гидравлический 1 поршневой суппорт</span></div>
-                <div class="spec-item"><span class="spec-label">Передняя подвеска</span><span class="spec-value">Перевернутого типа 780мм</span></div>
-                <div class="spec-item"><span class="spec-label">Задняя подвеска</span><span class="spec-value">Моноамортизатор 280мм, 1000LBS</span></div>
-                <div class="spec-item"><span class="spec-label">Переднее колесо</span><span class="spec-value">R 17</span></div>
-                <div class="spec-item"><span class="spec-label">Заднее колесо</span><span class="spec-value">R 14</span></div>
-                <div class="spec-item"><span class="spec-label">Объем топливного бака</span><span class="spec-value">6 л.</span></div>
-            </div>
-            <div class="shop-card"><div class="modal-text"><strong>🏪 НАШ УЮТНЫЙ САЛОН МОТОРУМ</strong></div><div class="modal-text">📍 Московская область, Наро-Фоминский г.о., д. Тарасково, Центральная ул., с1А</div><div class="modal-text">📅 График работы: Ср, Чт, Пт, Сб, Вс: с 10:30 до 19:30<br>Пн, Вт — выходные</div><div class="modal-text">📞 Телефон: <strong>8 977 465-79-72</strong></div></div>
-            <div class="button-group">
-                <button class="cart-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">🛒 В КОРЗИНУ</button>
-                <button class="buy-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">💳 КУПИТЬ СЕЙЧАС</button>
-            </div>
+            <div class="specs-grid"><div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">139FMB</span></div><div class="spec-item"><span class="spec-label">Объем двигателя</span><span class="spec-value">49 куб.см.</span></div><div class="spec-item"><span class="spec-label">Количество цилиндров</span><span class="spec-value">1</span></div><div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">2,2 л.с.</span></div><div class="spec-item"><span class="spec-label">Тактность</span><span class="spec-value">4-х тактный</span></div><div class="spec-item"><span class="spec-label">Балансировочный вал</span><span class="spec-value">нет</span></div><div class="spec-item"><span class="spec-label">Система охлаждения</span><span class="spec-value">Воздушная</span></div><div class="spec-item"><span class="spec-label">Количество скоростей</span><span class="spec-value">6</span></div><div class="spec-item"><span class="spec-label">Система запуска</span><span class="spec-value">Электро/кикстартер</span></div><div class="spec-item"><span class="spec-label">Трансмиссия</span><span class="spec-value">Механическая</span></div><div class="spec-item"><span class="spec-label">Система подачи топлива</span><span class="spec-value">NIBBI Racing PE19</span></div><div class="spec-item"><span class="spec-label">Зажигание</span><span class="spec-value">CDI</span></div><div class="spec-item"><span class="spec-label">Передние тормоза</span><span class="spec-value">Диск 220мм, двухпоршневой суппорт</span></div><div class="spec-item"><span class="spec-label">Задние тормоза</span><span class="spec-value">Дисковый 190мм, гидравлический 1 поршневой суппорт</span></div><div class="spec-item"><span class="spec-label">Передняя подвеска</span><span class="spec-value">Перевернутого типа 780мм</span></div><div class="spec-item"><span class="spec-label">Задняя подвеска</span><span class="spec-value">Моноамортизатор 280мм, 1000LBS</span></div><div class="spec-item"><span class="spec-label">Переднее колесо</span><span class="spec-value">R 17</span></div><div class="spec-item"><span class="spec-label">Заднее колесо</span><span class="spec-value">R 14</span></div><div class="spec-item"><span class="spec-label">Объем топливного бака</span><span class="spec-value">6 л.</span></div></div>
+            <div class="shop-card"><div class="modal-text"><strong>🏪 НАШ УЮТНЫЙ САЛОН МОТОРУМ</strong></div><div class="modal-text">📍 Московская область, Наро-Фоминский г.о., д. Тарасково, Центральная ул., с1А</div><div class="modal-text">📅 График работы: Ср, Чт, Пт, Сб, Вс: с 10:30 до 19:30<br>Пн, Вт — выходные</div><div class="modal-text">📞 Телефон: <strong>+7 977 465-79-72</strong></div></div>
+            <div class="button-group"><button class="cart-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">🛒 В КОРЗИНУ</button><button class="buy-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">💳 КУПИТЬ СЕЙЧАС</button></div>
         </div>
     </div>
 
@@ -581,13 +473,78 @@
         </div>
         <div class="global-delivery">
             <div class="delivery-icon">🌍🏍️</div>
-            <div class="delivery-text">ДОСТАВКА МОТОТЕХНИКИ ПО ВСЕЙ РОССИИ — БЕСПЛАТНО!</div>
-            <div class="delivery-sub">Москва в пределах МКАД — БЕСПЛАТНО · При 100% предоплате</div>
+            <div class="delivery-text">ДОСТАВКА МОТОТЕХНИКИ ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО</div>
+            <div class="delivery-sub">По России — по договоренности при 100% предоплате</div>
         </div>
     </div>
 
     <script>
-        // Товары для каталога — правильные названия
+        // ======================= ИНИЦИАЛИЗАЦИЯ EMAILJS =======================
+        emailjs.init({
+            publicKey: "QJIjE9EbXedKM5jp3"
+        });
+
+        // ID сервиса и шаблонов (из ваших данных)
+        const EMAILJS_SERVICE_ID = "service_tb65axe";
+        const EMAILJS_TEMPLATE_ORDER = "template_sg332h2";
+        const EMAILJS_TEMPLATE_CALLBACK = "template_w073gqp";
+
+        // Функция отправки заказа на почту
+        async function sendOrderEmail(name, phone, address, items, total) {
+            const templateParams = {
+                name: name,
+                phone: phone,
+                address: address,
+                items: items,
+                total: total
+            };
+            try {
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ORDER,
+                    templateParams
+                );
+                if (response.status === 200) {
+                    alert("✅ Заказ оформлен! Подтверждение отправлено менеджеру.");
+                    return true;
+                } else {
+                    throw new Error("Ошибка отправки");
+                }
+            } catch (error) {
+                console.error("EmailJS error:", error);
+                alert("❌ Ошибка отправки заказа. Позвоните нам: +7 977 465-79-72");
+                return false;
+            }
+        }
+
+        // Функция отправки заявки на обратный звонок
+        async function sendCallbackEmail(name, phone, time) {
+            const templateParams = {
+                name: name,
+                phone: phone,
+                time: time || "не указано"
+            };
+            try {
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_CALLBACK,
+                    templateParams
+                );
+                if (response.status === 200) {
+                    alert("✅ Заявка на обратный звонок принята! Скоро свяжемся.");
+                    return true;
+                } else {
+                    throw new Error();
+                }
+            } catch (error) {
+                console.error("EmailJS error:", error);
+                alert("❌ Ошибка отправки. Позвоните нам сами: +7 977 465-79-72");
+                return false;
+            }
+        }
+
+        // ======================= ОСТАЛЬНАЯ ЛОГИКА САЙТА =======================
+        // Товары для каталога
         const products = [
             { id: "sixdays", name: "Regulmoto SIX DAYS", price: 349000, modalId: "sixDaysModal" },
             { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
@@ -605,27 +562,51 @@
         }
         function buyNow(id,name,price) { addToCart(id,name,price); alert("Товар добавлен в корзину. Оформите заказ в корзине."); }
         function removeFromCart(idx) { cart.splice(idx,1); saveCart(); renderCartModal(); }
-        function updateQuantity(idx,delta) { if(cart[idx].quantity+delta>0) cart[idx].quantity+=delta; saveCart(); renderCartModal(); }
+        function updateQuantity(idx,delta) { if(cart[idx].quantity+delta>0) { cart[idx].quantity+=delta; saveCart(); renderCartModal(); } }
         function renderCartModal() {
             const container = document.getElementById('cartItemsContainer');
             if(!container) return;
             if(cart.length===0) { container.innerHTML='<div class="cart-empty">🛒 Корзина пуста</div>'; return; }
             let html='', total=0;
             cart.forEach((item,idx)=>{
-                let itemTotal = item.price*item.quantity;
-                total+=itemTotal;
-                html+=`<div class="cart-item"><div><strong>${item.name}</strong><br>${item.price.toLocaleString()}₽ × ${item.quantity}</div><div>${itemTotal.toLocaleString()}₽</div><div><button class="cart-remove" onclick="updateQuantity(${idx},-1)">-</button> <button class="cart-remove" onclick="updateQuantity(${idx},1)">+</button> <button class="cart-remove" onclick="removeFromCart(${idx})">🗑️</button></div></div>`;
+                let itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info"><strong>${item.name}</strong><br>${item.price.toLocaleString()} ₽ × ${item.quantity}</div>
+                        <div class="cart-item-price">${itemTotal.toLocaleString()} ₽</div>
+                        <div class="cart-item-actions">
+                            <button class="cart-remove" onclick="updateQuantity(${idx}, -1)">-</button>
+                            <button class="cart-remove" onclick="updateQuantity(${idx}, 1)">+</button>
+                            <button class="cart-remove" onclick="removeFromCart(${idx})">🗑️</button>
+                        </div>
+                    </div>
+                `;
             });
-            html+=`<div class="cart-total">ИТОГО: ${total.toLocaleString()}₽</div><div style="margin-top:15px;text-align:right;"><button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button></div>`;
-            container.innerHTML=html;
-            document.getElementById('checkoutBtn')?.addEventListener('click',()=>{
-                let name=prompt("Ваше имя:");
-                if(!name) return;
-                let phone=prompt("Телефон для связи:");
-                if(!phone) return;
-                let address=prompt("Адрес доставки:");
-                alert(`✅ Спасибо, ${name}! Ваш заказ принят. Мы свяжемся с вами.`);
-                cart=[]; saveCart(); renderCartModal(); updateCartCount();
+            html += `<div class="cart-total">ИТОГО: ${total.toLocaleString()} ₽</div><div style="margin-top:15px;text-align:right;"><button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button></div>`;
+            container.innerHTML = html;
+            document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
+                let name = prompt("Ваше имя:");
+                if (!name) return;
+                let phone = prompt("Телефон для связи:");
+                if (!phone) return;
+                let address = prompt("Адрес доставки:");
+                if (!address) return;
+
+                const itemsForSend = cart.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                }));
+                const totalAmount = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+
+                const success = await sendOrderEmail(name, phone, address, itemsForSend, totalAmount);
+                if (success) {
+                    cart = [];
+                    saveCart();
+                    renderCartModal();
+                    updateCartCount();
+                }
             });
         }
 
@@ -634,8 +615,8 @@
             if(!grid) return;
             grid.innerHTML = products.map(p=>`
                 <div class="catalog-item" data-modal="${p.modalId}">
-                    <h4>🏍️ ${p.name}</h4>
-                    <div class="catalog-price">${p.price.toLocaleString()}₽</div>
+                    <h4><span class="brand">Regulmoto</span> <span class="model">${p.name.split(' ').slice(1).join(' ')}</span></h4>
+                    <div class="catalog-price">${p.price.toLocaleString()} ₽</div>
                     <button class="add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">+ В корзину</button>
                 </div>
             `).join('');
@@ -689,6 +670,7 @@
         document.getElementById('homeLink')?.addEventListener('click',(e)=>{e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'});});
         document.getElementById('homeLinkNav')?.addEventListener('click',(e)=>{e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'});});
         document.getElementById('catalogLink')?.addEventListener('click',async(e)=>{e.preventDefault(); await renderCatalogModal(); openModal(document.getElementById('catalogModal'));});
+        document.getElementById('servicesLink')?.addEventListener('click',(e)=>{e.preventDefault(); openModal(document.getElementById('servicesModal'));});
         document.getElementById('eventsLink')?.addEventListener('click',(e)=>{e.preventDefault(); renderEventsModal(); openModal(document.getElementById('eventsModal'));});
         document.getElementById('aboutLink')?.addEventListener('click',(e)=>{e.preventDefault(); openModal(document.getElementById('aboutModal'));});
         document.getElementById('deliveryLink')?.addEventListener('click',(e)=>{e.preventDefault(); openModal(document.getElementById('deliveryModal'));});
@@ -699,12 +681,13 @@
         document.getElementById('btnBikes')?.addEventListener('click',async()=>{ await renderCatalogModal(); openModal(document.getElementById('catalogModal')); });
         document.querySelector('.work-hours')?.addEventListener('click',()=>alert("Ср-Вс 10:30–19:30, Пн-Вт выходные"));
 
-        document.getElementById('callbackFormFixed')?.addEventListener('submit',(e)=>{
+        // ОБРАБОТЧИК ОБРАТНОГО ЗВОНКА (форма в модалке callbackModal)
+        document.getElementById('callbackFormFixed')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             let name = document.getElementById('callbackNameFixed').value;
             let phone = document.getElementById('callbackPhoneFixed').value;
             let time = document.getElementById('callbackTimeFixed').value;
-            alert(`✅ Заявка принята!\nИмя: ${name}\nТелефон: ${phone}\nВремя: ${time||"не указано"}\nСкоро свяжемся.`);
+            await sendCallbackEmail(name, phone, time);
             closeModal(document.getElementById('callbackModal'));
             e.target.reset();
         });
