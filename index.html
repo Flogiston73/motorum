@@ -127,6 +127,7 @@
         .motorum-wrapper {
             display: inline-block;
             cursor: pointer;
+            margin-bottom: 5px;
         }
         .motorum-letter {
             display: inline-block;
@@ -155,10 +156,11 @@
             border-bottom: 1px solid rgba(255,140,0,0.4);
             display: inline-block;
             padding: 6px 16px;
-            margin-top: 8px;
+            margin-top: 5px;
+            text-align: center;
         }
 
-        /* ТЕГИ И КНОПКА */
+        /* ТЕГИ */
         .extreme-tags, .buttons-container {
             margin: 20px 0;
             text-align: center;
@@ -487,6 +489,11 @@
             background: repeating-linear-gradient(45deg, rgba(60,35,15,0.3) 0px, rgba(60,35,15,0.3) 12px, transparent 12px, transparent 24px);
             pointer-events: none;
         }
+        .cart-empty {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -523,6 +530,7 @@
     </div>
 
     <!-- МОДАЛЬНЫЕ ОКНА -->
+    <!-- Корзина -->
     <div id="cartModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="cartModal">&times;</div>
@@ -531,6 +539,7 @@
         </div>
     </div>
 
+    <!-- Каталог -->
     <div id="catalogModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="catalogModal">&times;</div>
@@ -539,6 +548,7 @@
         </div>
     </div>
 
+    <!-- События -->
     <div id="eventsModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="eventsModal">&times;</div>
@@ -547,6 +557,7 @@
         </div>
     </div>
 
+    <!-- Пользователь -->
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="userModal">&times;</div>
@@ -555,6 +566,7 @@
         </div>
     </div>
 
+    <!-- Обратный звонок -->
     <div id="callbackModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="callbackModal">&times;</div>
@@ -568,14 +580,17 @@
         </div>
     </div>
 
+    <!-- О компании -->
     <div id="aboutModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="aboutModal">&times;</div>
             <div class="modal-title">МОТОРУМ — место силы</div>
             <div class="modal-text">Мотосалон нового формата. Адрес: д. Тарасково, Центральная ул., с1А. График: Ср–Вс 10:30–19:30. Тел: +7 977 465-79-72.</div>
+            <div class="modal-text">Мы продаём эмоции, уверенность и верных двухколесных друзей.</div>
         </div>
     </div>
 
+    <!-- Доставка -->
     <div id="deliveryModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="deliveryModal">&times;</div>
@@ -584,6 +599,7 @@
         </div>
     </div>
 
+    <!-- Контакты -->
     <div id="contactsModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="contactsModal">&times;</div>
@@ -595,35 +611,42 @@
         </div>
     </div>
 
+    <!-- Услуги -->
     <div id="servicesModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="servicesModal">&times;</div>
             <div class="modal-title">🛠 НАШИ УСЛУГИ</div>
             <ul style="margin-left: 20px; color:#ccc;">
                 <li>🚚 Доставка мототехники по Москве и области</li>
-                <li>🔧 Профессиональная сборка</li>
-                <li>📋 Помощь в постановке на учёт</li>
+                <li>🔧 Профессиональная сборка и предпродажная подготовка</li>
+                <li>📋 Помощь в постановке на учёт в ГИБДД</li>
+                <li>🛠 Консультации по выбору и обслуживанию</li>
             </ul>
+            <div class="modal-text" style="margin-top:15px;">Звоните: +7 977 465-79-72</div>
         </div>
     </div>
 
-    <!-- КАРТОЧКИ ТОВАРОВ -->
+    <!-- КАРТОЧКИ ТОВАРОВ (полные характеристики) -->
     <div id="sixDaysModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="sixDaysModal">&times;</div>
             <div class="modal-title">🏍️ REGULMOTO SIX DAYS</div>
-            <div class="price-badge">🔥 349 000 ₽ 🔥</div>
-            <div class="modal-text">🚚 Доставка по Москве в пределах МКАД — БЕСПЛАТНО!<br>⭐ Новинка 2025. Требуется категория "А".</div>
+            <div class="price-badge">🔥 Цена: 349 000 ₽ 🔥</div>
+            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО!</strong><br>⭐ Новинка 2025 года. В наличии. Требуется категория "А".</div>
+            <div class="modal-subtitle">📋 ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ</div>
             <div class="specs-grid">
                 <div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div>
-                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 см³</span></div>
+                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 куб.см.</span></div>
                 <div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">31 л.с.</span></div>
-                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ст.</span></div>
+                <div class="spec-item"><span class="spec-label">Охлаждение</span><span class="spec-value">Жидкостное</span></div>
+                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ступеней</span></div>
+                <div class="spec-item"><span class="spec-label">Старт</span><span class="spec-value">Электро</span></div>
                 <div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">125 кг</span></div>
+                <div class="spec-item"><span class="spec-label">Высота по седлу</span><span class="spec-value">930 мм</span></div>
             </div>
             <div class="button-group">
                 <button class="cart-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">🛒 В КОРЗИНУ</button>
-                <button class="buy-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">💳 КУПИТЬ</button>
+                <button class="buy-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">💳 КУПИТЬ СЕЙЧАС</button>
             </div>
         </div>
     </div>
@@ -632,18 +655,22 @@
         <div class="modal-content">
             <div class="modal-close" data-modal="crosstrecModal">&times;</div>
             <div class="modal-title">🏍️ REGULMOTO CROSSTREC NB350</div>
-            <div class="price-badge">🔥 331 000 ₽ 🔥</div>
-            <div class="modal-text">🚚 Доставка по Москве бесплатно. Новинка 2026.</div>
+            <div class="price-badge">🔥 Цена: 331 000 ₽ 🔥</div>
+            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО!</strong><br>⭐ Новинка 2026 года. В наличии. Требуется категория "А".</div>
+            <div class="modal-subtitle">📋 ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ</div>
             <div class="specs-grid">
                 <div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div>
-                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 см³</span></div>
+                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 куб.см.</span></div>
                 <div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">32 л.с.</span></div>
-                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ст.</span></div>
+                <div class="spec-item"><span class="spec-label">Охлаждение</span><span class="spec-value">Воздушное</span></div>
+                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ступеней</span></div>
+                <div class="spec-item"><span class="spec-label">Старт</span><span class="spec-value">Электро</span></div>
                 <div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">127 кг</span></div>
+                <div class="spec-item"><span class="spec-label">Высота по седлу</span><span class="spec-value">950 мм</span></div>
             </div>
             <div class="button-group">
                 <button class="cart-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">🛒 В КОРЗИНУ</button>
-                <button class="buy-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">💳 КУПИТЬ</button>
+                <button class="buy-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">💳 КУПИТЬ СЕЙЧАС</button>
             </div>
         </div>
     </div>
@@ -652,17 +679,21 @@
         <div class="modal-content">
             <div class="modal-close" data-modal="spitfireModal">&times;</div>
             <div class="modal-title">🔥 ПИТБАЙК REGULMOTO SPITFIRE 17/14</div>
-            <div class="price-badge">🔥 105 000 ₽ 🔥</div>
-            <div class="modal-text">Спортинвентарь. Категория А не нужна!</div>
+            <div class="price-badge">🔥 Цена: 105 000 ₽ 🔥</div>
+            <div class="modal-text"><strong>🚚 ДОСТАВКА ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО!</strong><br>⭐ Спортинвентарь. Категория А не нужна. В наличии.</div>
+            <div class="modal-subtitle">📋 ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ</div>
             <div class="specs-grid">
                 <div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">139FMB</span></div>
-                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">49 см³</span></div>
-                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ст.</span></div>
+                <div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">49 куб.см.</span></div>
+                <div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">2,2 л.с.</span></div>
+                <div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ступеней</span></div>
                 <div class="spec-item"><span class="spec-label">Старт</span><span class="spec-value">Электро/кик</span></div>
+                <div class="spec-item"><span class="spec-label">Колеса</span><span class="spec-value">17"/14"</span></div>
+                <div class="spec-item"><span class="spec-label">Бак</span><span class="spec-value">6 л</span></div>
             </div>
             <div class="button-group">
                 <button class="cart-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">🛒 В КОРЗИНУ</button>
-                <button class="buy-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">💳 КУПИТЬ</button>
+                <button class="buy-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">💳 КУПИТЬ СЕЙЧАС</button>
             </div>
         </div>
     </div>
@@ -692,7 +723,7 @@
         </div>
         <div class="global-delivery">
             <div class="delivery-icon">🌍🏍️</div>
-            <div class="delivery-text">ДОСТАВКА ПО МОСКВЕ (В ПРЕДЕЛАХ МКАД) — БЕСПЛАТНО</div>
+            <div class="delivery-text">ДОСТАВКА МОТОТЕХНИКИ ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО</div>
             <div class="delivery-sub">По России — по договоренности при 100% предоплате</div>
         </div>
     </div>
@@ -708,29 +739,27 @@
         async function sendOrderEmail(name, phone, address, itemsText, total) {
             try {
                 const res = await emailjs.send(SERVICE_ID, ORDER_TEMPLATE, { name, phone, address, items_text: itemsText, total });
-                if(res.status === 200) { alert("✅ Заказ оформлен!"); return true; }
-            } catch(e) { alert("❌ Ошибка. Позвоните: +7 977 465-79-72"); return false; }
+                if(res.status === 200) { alert("✅ Заказ оформлен! Подтверждение отправлено менеджеру."); return true; }
+            } catch(e) { alert("❌ Ошибка отправки. Позвоните нам: +7 977 465-79-72"); return false; }
         }
         async function sendCallbackEmail(name, phone, time) {
             try {
                 const res = await emailjs.send(SERVICE_ID, CALLBACK_TEMPLATE, { name, phone, time: time || "не указано" });
-                if(res.status === 200) { alert("✅ Заявка принята!"); return true; }
-            } catch(e) { alert("❌ Ошибка. Позвоните: +7 977 465-79-72"); return false; }
+                if(res.status === 200) { alert("✅ Заявка принята! Скоро свяжемся."); return true; }
+            } catch(e) { alert("❌ Ошибка отправки. Позвоните: +7 977 465-79-72"); return false; }
         }
 
         // КОРЗИНА
         let cart = JSON.parse(localStorage.getItem('motorum_cart')) || [];
         function saveCart() { localStorage.setItem('motorum_cart', JSON.stringify(cart)); updateCartCount(); }
         function updateCartCount() { document.getElementById('cartCount').innerText = cart.reduce((s,i)=>s+i.quantity,0); }
-        
         function addToCart(id, name, price) {
             let item = cart.find(i => i.id === id);
             if(item) item.quantity++;
             else cart.push({ id, name, price, quantity: 1 });
             saveCart();
-            alert(`✅ ${name} в корзине`);
+            alert(`✅ ${name} добавлен в корзину!`);
         }
-        
         function removeFromCart(idx) { cart.splice(idx,1); saveCart(); renderCartModal(); }
         function updateQuantity(idx, delta) {
             if(cart[idx].quantity + delta > 0) {
@@ -777,7 +806,7 @@
             
             document.getElementById('checkoutBtn').onclick = async () => {
                 const name = prompt("Ваше имя:"); if(!name) return;
-                const phone = prompt("Телефон:"); if(!phone) return;
+                const phone = prompt("Телефон для связи:"); if(!phone) return;
                 const address = prompt("Адрес доставки:"); if(!address) return;
                 let itemsText = "";
                 cart.forEach(i => itemsText += `${i.name} — ${i.quantity} шт. — ${i.price.toLocaleString()} ₽\n`);
@@ -797,7 +826,6 @@
             { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
             { id: "spitfire", name: "Regulmoto SPITFIRE 17/14", price: 105000, modalId: "spitfireModal" }
         ];
-        
         function renderCatalogModal() {
             const grid = document.getElementById('catalogGrid');
             if(!grid) return;
@@ -816,10 +844,10 @@
             });
         }
 
-        // КНОПКИ В КАРТОЧКАХ
+        // КНОПКИ В КАРТОЧКАХ ТОВАРОВ
         function bindModalButtons() {
             document.querySelectorAll('.cart-btn').forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); }; });
-            document.querySelectorAll('.buy-btn').forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); alert("Товар добавлен. Оформите заказ в корзине."); }; });
+            document.querySelectorAll('.buy-btn').forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); alert("Товар добавлен в корзину. Оформите заказ в корзине."); }; });
         }
 
         // МОДАЛКИ
@@ -833,13 +861,14 @@
         // НАВИГАЦИЯ
         document.getElementById('homeLink')?.onclick = (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); };
         document.getElementById('homeLinkNav')?.onclick = (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); };
-        document.getElementById('catalogLink')?.onclick = async (e) => { e.preventDefault(); renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
+        document.getElementById('catalogLink')?.onclick = (e) => { e.preventDefault(); renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
         document.getElementById('servicesLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('servicesModal')); };
-        document.getElementById('eventsLink')?.onclick = (e) => { e.preventDefault(); document.getElementById('eventsList').innerHTML = `<div>📅 15.06.2026 — Эндуро-кросс в Тарасково</div><div>📅 03.07.2026 — Мотобратва, трек-день</div><div>📅 22.08.2026 — Фестиваль «Грязь и газ», Калуга</div>`; openModal(document.getElementById('eventsModal')); };
+        document.getElementById('eventsLink')?.onclick = (e) => { e.preventDefault(); document.getElementById('eventsList').innerHTML = `<div>📅 15 июня 2026 — Эндуро-кросс в Тарасково</div><div>📅 3 июля 2026 — Мотобратва, трек-день</div><div>📅 22 августа 2026 — Фестиваль «Грязь и газ», Калужская область</div>`; openModal(document.getElementById('eventsModal')); };
         document.getElementById('aboutLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('aboutModal')); };
         document.getElementById('deliveryLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('deliveryModal')); };
         document.getElementById('contactsLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('contactsModal')); };
-        document.getElementById('userIcon')?.onclick = (e) => { e.preventDefault(); document.getElementById('userContent').innerHTML = `<div class="modal-subtitle">ВХОД</div><form id="loginForm"><input type="email" placeholder="Email"><input type="password" placeholder="Пароль"><button type="submit" class="submit-btn">ВОЙТИ</button></form><div class="modal-subtitle">РЕГИСТРАЦИЯ</div><form id="registerForm"><input type="text" placeholder="Имя"><input type="email" placeholder="Email"><input type="tel" placeholder="Телефон"><input type="password" placeholder="Пароль"><button type="submit" class="submit-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button></form>`;
+        document.getElementById('userIcon')?.onclick = (e) => { e.preventDefault(); 
+            document.getElementById('userContent').innerHTML = `<div class="modal-subtitle">ВХОД</div><form id="loginForm"><div class="form-group"><input type="email" id="loginEmail" placeholder="Email" required></div><div class="form-group"><input type="password" id="loginPassword" placeholder="Пароль" required></div><button type="submit" class="submit-btn">ВОЙТИ</button></form><div class="modal-subtitle">РЕГИСТРАЦИЯ</div><form id="registerForm"><div class="form-group"><input type="text" id="regName" placeholder="Имя" required></div><div class="form-group"><input type="email" id="regEmail" placeholder="Email" required></div><div class="form-group"><input type="tel" id="regPhone" placeholder="Телефон" required></div><div class="form-group"><input type="password" id="regPassword" placeholder="Пароль" required></div><button type="submit" class="submit-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button></form>`;
             document.getElementById('loginForm')?.addEventListener('submit',(e)=>{e.preventDefault(); alert("Демо-вход"); closeModal(document.getElementById('userModal'));});
             document.getElementById('registerForm')?.addEventListener('submit',(e)=>{e.preventDefault(); alert("Демо-регистрация"); closeModal(document.getElementById('userModal'));});
             openModal(document.getElementById('userModal'));
