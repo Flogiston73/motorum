@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>МОТОРУМ | Эндуро мототехника</title>
-    <!-- EmailJS library -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * {
@@ -530,40 +529,66 @@
             }
         }
 
-        // ======================= ОСТАЛЬНАЯ ЛОГИКА САЙТА =======================
-        const products = [
-            { id: "sixdays", name: "Regulmoto SIX DAYS", price: 349000, modalId: "sixDaysModal" },
-            { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
-            { id: "spitfire", name: "Regulmoto SPITFIRE 17/14", price: 105000, modalId: "spitfireModal" }
-        ];
-
+        // ======================= ЛОГИКА КОРЗИНЫ (с закрытием) =======================
         let cart = JSON.parse(localStorage.getItem('motorum_cart')) || [];
-        function saveCart() { localStorage.setItem('motorum_cart', JSON.stringify(cart)); updateCartCount(); }
-        function updateCartCount() { document.getElementById('cartCount').innerText = cart.reduce((s,i)=>s+i.quantity,0); }
-        function addToCart(id,name,price) {
-            let item = cart.find(i=>i.id===id);
-            if(item) item.quantity++; else cart.push({id,name,price,quantity:1});
+
+        function saveCart() {
+            localStorage.setItem('motorum_cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').innerText = totalItems;
+        }
+
+        function addToCart(id, name, price) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
             saveCart();
             alert(`✅ ${name} добавлен в корзину!`);
         }
-        function buyNow(id,name,price) { addToCart(id,name,price); alert("Товар добавлен в корзину. Оформите заказ в корзине."); }
-        function removeFromCart(idx) { cart.splice(idx,1); saveCart(); renderCartModal(); }
-        function updateQuantity(idx,delta) { if(cart[idx].quantity+delta>0) { cart[idx].quantity+=delta; saveCart(); renderCartModal(); } }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            renderCartModal();   // обновляем содержимое модалки
+        }
+
+        function updateQuantity(index, delta) {
+            if (cart[index].quantity + delta > 0) {
+                cart[index].quantity += delta;
+                saveCart();
+                renderCartModal();
+            } else if (cart[index].quantity + delta === 0) {
+                removeFromCart(index);
+            }
+        }
 
         function renderCartModal() {
             const container = document.getElementById('cartItemsContainer');
             if (!container) return;
+
             if (cart.length === 0) {
                 container.innerHTML = '<div class="cart-empty">🛒 Корзина пуста</div>';
                 return;
             }
-            let html = '', total = 0;
+
+            let html = '';
+            let total = 0;
             cart.forEach((item, idx) => {
-                let itemTotal = item.price * item.quantity;
+                const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 html += `
                     <div class="cart-item">
-                        <div class="cart-item-info"><strong>${item.name}</strong><br>${item.price.toLocaleString()} ₽ × ${item.quantity}</div>
+                        <div class="cart-item-info">
+                            <strong>${item.name}</strong><br>
+                            ${item.price.toLocaleString()} ₽ × ${item.quantity}
+                        </div>
                         <div class="cart-item-price">${itemTotal.toLocaleString()} ₽</div>
                         <div class="cart-item-actions">
                             <button class="cart-remove" onclick="updateQuantity(${idx}, -1)">-</button>
@@ -573,36 +598,53 @@
                     </div>
                 `;
             });
-            html += `<div class="cart-total">ИТОГО: ${total.toLocaleString()} ₽</div><div style="margin-top:15px;text-align:right;"><button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button></div>`;
+            html += `
+                <div class="cart-total">ИТОГО: ${total.toLocaleString()} ₽</div>
+                <div style="margin-top:15px; text-align:right;">
+                    <button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button>
+                </div>
+            `;
             container.innerHTML = html;
 
-            document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
-                let name = prompt("Ваше имя:");
-                if (!name) return;
-                let phone = prompt("Телефон для связи:");
-                if (!phone) return;
-                let address = prompt("Адрес доставки:");
-                if (!address) return;
+            // Привязываем обработчик к новой кнопке
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            if (checkoutBtn) {
+                checkoutBtn.onclick = async () => {
+                    const name = prompt("Ваше имя:");
+                    if (!name) return;
+                    const phone = prompt("Телефон для связи:");
+                    if (!phone) return;
+                    const address = prompt("Адрес доставки:");
+                    if (!address) return;
 
-                // Формируем текстовую строку товаров
-                let itemsText = "";
-                cart.forEach(item => {
-                    itemsText += `${item.name} — ${item.quantity} шт. — ${item.price.toLocaleString()} ₽\n`;
-                });
-                const totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+                    // формируем текст товаров
+                    let itemsText = "";
+                    cart.forEach(item => {
+                        itemsText += `${item.name} — ${item.quantity} шт. — ${item.price.toLocaleString()} ₽\n`;
+                    });
+                    const totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
-                const success = await sendOrderEmail(name, phone, address, itemsText, totalAmount);
-                if (success) {
-                    cart = [];
-                    saveCart();
-                    // Закрываем модальное окно корзины
-                    closeModal(document.getElementById('cartModal'));
-                    // Обновляем отображение счётчика и содержимого корзины на случай повторного открытия
-                    renderCartModal();
-                    updateCartCount();
-                }
-            });
+                    const success = await sendOrderEmail(name, phone, address, itemsText, totalAmount);
+                    if (success) {
+                        // Очищаем корзину
+                        cart = [];
+                        saveCart();
+                        // Закрываем модальное окно корзины
+                        closeModal(document.getElementById('cartModal'));
+                        // Обновляем счётчик на иконке
+                        updateCartCount();
+                        // Чтобы при следующем открытии корзина была пустой, перерисовывать не нужно – она закроется
+                    }
+                };
+            }
         }
+
+        // ======================= КАТАЛОГ И ОСТАЛЬНЫЕ МОДАЛКИ =======================
+        const products = [
+            { id: "sixdays", name: "Regulmoto SIX DAYS", price: 349000, modalId: "sixDaysModal" },
+            { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
+            { id: "spitfire", name: "Regulmoto SPITFIRE 17/14", price: 105000, modalId: "spitfireModal" }
+        ];
 
         async function renderCatalogModal() {
             const grid = document.getElementById('catalogGrid');
@@ -617,7 +659,7 @@
             document.querySelectorAll('.catalog-item').forEach(card => {
                 card.addEventListener('click', (e) => {
                     if (e.target.classList.contains('add-to-cart')) return;
-                    let modal = document.getElementById(card.dataset.modal);
+                    const modal = document.getElementById(card.dataset.modal);
                     if (modal) openModal(modal);
                 });
             });
@@ -648,19 +690,36 @@
             document.getElementById('registerForm')?.addEventListener('submit', (e) => { e.preventDefault(); alert("Демо-регистрация"); closeModal(document.getElementById('userModal')); });
         }
 
-        function closeModal(modal) { if (modal) modal.classList.remove('active'); document.body.style.overflow = ''; }
-        function openModal(modal) { if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; } }
+        function closeModal(modal) {
+            if (modal) modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
+        function openModal(modal) {
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Закрытие по крестику и фону
         document.querySelectorAll('.modal-close').forEach(btn => {
             btn.addEventListener('click', () => {
-                let id = btn.getAttribute('data-modal');
+                const id = btn.getAttribute('data-modal');
                 if (id) closeModal(document.getElementById(id));
                 else closeModal(btn.closest('.modal'));
             });
         });
-        document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', (e) => { if (e.target === m) closeModal(m); }));
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(m => closeModal(m)); });
+        document.querySelectorAll('.modal').forEach(m => {
+            m.addEventListener('click', (e) => {
+                if (e.target === m) closeModal(m);
+            });
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(m => closeModal(m));
+        });
 
+        // Навигация
         document.getElementById('homeLink')?.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
         document.getElementById('homeLinkNav')?.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
         document.getElementById('catalogLink')?.addEventListener('click', async (e) => { e.preventDefault(); await renderCatalogModal(); openModal(document.getElementById('catalogModal')); });
@@ -670,16 +729,20 @@
         document.getElementById('deliveryLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(document.getElementById('deliveryModal')); });
         document.getElementById('contactsLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(document.getElementById('contactsModal')); });
         document.getElementById('userIcon')?.addEventListener('click', (e) => { e.preventDefault(); renderUserModal(); openModal(document.getElementById('userModal')); });
-        document.getElementById('cartIcon')?.addEventListener('click', () => { renderCartModal(); openModal(document.getElementById('cartModal')); });
+        document.getElementById('cartIcon')?.addEventListener('click', () => {
+            renderCartModal();
+            openModal(document.getElementById('cartModal'));
+        });
         document.getElementById('callbackFixedBtn')?.addEventListener('click', () => openModal(document.getElementById('callbackModal')));
         document.getElementById('btnBikes')?.addEventListener('click', async () => { await renderCatalogModal(); openModal(document.getElementById('catalogModal')); });
         document.querySelector('.work-hours')?.addEventListener('click', () => alert("Ср-Вс 10:30–19:30, Пн-Вт выходные"));
 
+        // Обработчик обратного звонка
         document.getElementById('callbackFormFixed')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            let name = document.getElementById('callbackNameFixed').value;
-            let phone = document.getElementById('callbackPhoneFixed').value;
-            let time = document.getElementById('callbackTimeFixed').value;
+            const name = document.getElementById('callbackNameFixed').value;
+            const phone = document.getElementById('callbackPhoneFixed').value;
+            const time = document.getElementById('callbackTimeFixed').value;
             await sendCallbackEmail(name, phone, time);
             closeModal(document.getElementById('callbackModal'));
             e.target.reset();
