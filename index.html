@@ -4,307 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>МОТОРУМ | Эндуро мототехника</title>
-    <!-- Firebase SDK (не модули, а глобальный объект) -->
+    <!-- Firebase (глобальная совместимая версия) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script>
-        // Конфигурация Firebase (ваша)
-        const firebaseConfig = {
-            apiKey: "AIzaSyB4lw4Ktiz4pqJ0JShKOUalZG9GxbT5oZE",
-            authDomain: "motorum-site.firebaseapp.com",
-            projectId: "motorum-site",
-            storageBucket: "motorum-site.firebasestorage.app",
-            messagingSenderId: "585700757777",
-            appId: "1:585700757777:web:d9341cea37ceabdbbdfcb0",
-            measurementId: "G-ZGQEJB1ZP5"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-    </script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            max-width: 100%;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: #050505;
-            font-family: 'Oswald', 'Anton', sans-serif;
-            color: #ccc;
-            line-height: 1.4;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+        body { background: #050505; font-family: 'Oswald', 'Anton', sans-serif; color: #ccc; line-height: 1.4; }
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&display=swap');
 
         /* ===== НАВИГАЦИЯ ===== */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background: rgba(5,5,5,0.96);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,140,0,0.3);
-            padding: 10px 16px;
-        }
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: #FF8C00;
-            text-decoration: none;
-            font-family: 'Anton', sans-serif;
-            white-space: nowrap;
-        }
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 14px;
-        }
-        .nav-links a, .cart-icon, .user-icon {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            transition: 0.2s;
-        }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(5,5,5,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,140,0,0.3); padding: 10px 16px; }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+        .nav-logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; color: #FF8C00; text-decoration: none; font-family: 'Anton', sans-serif; white-space: nowrap; }
+        .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+        .nav-links a, .cart-icon, .user-icon { color: #ccc; text-decoration: none; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; transition: 0.2s; cursor: pointer; }
         .nav-links a:hover, .cart-icon:hover, .user-icon:hover { color: #FF8C00; }
-        .cart-icon, .user-icon { cursor: pointer; font-size: 1.2rem; margin-left: 4px; position: relative; }
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -12px;
-            background: #FF8C00;
-            color: #000;
-            font-size: 0.7rem;
-            font-weight: bold;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .cart-icon, .user-icon { font-size: 1.2rem; margin-left: 4px; position: relative; }
+        .cart-count { position: absolute; top: -10px; right: -12px; background: #FF8C00; color: #000; font-size: 0.7rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .nav-social { display: flex; gap: 12px; }
         .nav-social a { color: #aaa; font-size: 0.9rem; transition: 0.2s; }
         .nav-social a:hover { color: #FF8C00; }
 
         /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
-        .main-content {
-            position: relative;
-            z-index: 10;
-            max-width: 1300px;
-            margin: 95px auto 40px;
-            padding: 0 16px 40px;
-        }
-        @media (max-width: 600px) {
-            .main-content { margin-top: 130px; }
-            .nav-container { flex-direction: column; align-items: stretch; text-align: center; }
-            .nav-links { justify-content: center; }
-        }
+        .main-content { position: relative; z-index: 10; max-width: 1300px; margin: 95px auto 40px; padding: 0 16px 40px; }
+        @media (max-width: 600px) { .main-content { margin-top: 130px; } .nav-container { flex-direction: column; text-align: center; } .nav-links { justify-content: center; } }
 
         /* ===== HERO ===== */
-        .hero {
-            text-align: center;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .motorum-wrapper {
-            display: inline-block;
-            cursor: pointer;
-            margin-bottom: 5px;
-        }
-        .motorum-letter {
-            display: inline-block;
-            font-size: clamp(3rem, 12vw, 7rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-family: 'Anton', 'Bebas Neue', sans-serif;
-            background: linear-gradient(135deg, #FF8C00, #FF5500);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            transition: all 0.2s cubic-bezier(0.2,0.9,0.4,1.1);
-            letter-spacing: 0;
-        }
-        @media (min-width: 768px) {
-            .motorum-wrapper:hover .motorum-letter { letter-spacing: 8px; }
-            .motorum-wrapper:hover .motorum-letter:nth-child(1) { transform: translateX(-4px); }
-            .motorum-wrapper:hover .motorum-letter:nth-child(2) { transform: translateX(-2px); }
-            .motorum-wrapper:hover .motorum-letter:nth-child(3) { transform: translateX(-1px); }
-            .motorum-wrapper:hover .motorum-letter:nth-child(5) { transform: translateX(1px); }
-            .motorum-wrapper:hover .motorum-letter:nth-child(6) { transform: translateX(2px); }
-            .motorum-wrapper:hover .motorum-letter:nth-child(7) { transform: translateX(4px); }
-        }
-        .hero-sub {
-            font-size: clamp(0.7rem, 3.5vw, 1rem);
-            color: #aaa;
-            letter-spacing: clamp(2px, 2vw, 5px);
-            text-transform: uppercase;
-            border-top: 1px solid rgba(255,140,0,0.4);
-            border-bottom: 1px solid rgba(255,140,0,0.4);
-            display: block;
-            padding: 6px 16px;
-            margin-top: 5px;
-            text-align: center;
-            white-space: nowrap;
-            max-width: 90vw;
-            overflow-x: auto;
-        }
-        @media (max-width: 550px) {
-            .hero-sub { white-space: normal; word-break: keep-all; letter-spacing: 2px; }
-        }
+        .hero { text-align: center; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; }
+        .motorum-wrapper { display: inline-block; cursor: pointer; margin-bottom: 5px; }
+        .motorum-letter { display: inline-block; font-size: clamp(3rem, 12vw, 7rem); font-weight: 700; text-transform: uppercase; font-family: 'Anton','Bebas Neue',sans-serif; background: linear-gradient(135deg, #FF8C00, #FF5500); -webkit-background-clip: text; background-clip: text; color: transparent; transition: 0.2s; letter-spacing: 0; }
+        @media (min-width: 768px) { .motorum-wrapper:hover .motorum-letter { letter-spacing: 8px; } }
+        .hero-sub { font-size: clamp(0.7rem, 3.5vw, 1rem); color: #aaa; letter-spacing: clamp(2px, 2vw, 5px); text-transform: uppercase; border-top: 1px solid rgba(255,140,0,0.4); border-bottom: 1px solid rgba(255,140,0,0.4); display: inline-block; padding: 6px 16px; margin-top: 5px; white-space: nowrap; max-width: 90vw; overflow-x: auto; }
+        @media (max-width: 550px) { .hero-sub { white-space: normal; word-break: keep-all; } }
 
-        /* ===== ОБЩИЕ СТИЛИ ===== */
         .extreme-tags, .buttons-container, .work-hours, .global-delivery { margin: 20px 0; text-align: center; }
-        .tag, .btn-moto, .work-hours, .delivery-text { transition: 0.2s; }
-        .tag {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            border: 1px solid rgba(255,140,0,0.4);
-            color: #FF8C00;
-            text-transform: uppercase;
-            margin: 0 5px;
-        }
-        .btn-moto {
-            background: transparent;
-            border: 2px solid #FF8C00;
-            color: #fff;
-            padding: 12px 32px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
+        .tag { display: inline-block; font-size: 0.75rem; padding: 4px 12px; border: 1px solid rgba(255,140,0,0.4); color: #FF8C00; text-transform: uppercase; margin: 0 5px; }
+        .btn-moto { background: transparent; border: 2px solid #FF8C00; color: #fff; padding: 12px 32px; font-size: 1rem; font-weight: 600; cursor: pointer; }
         .btn-moto:hover { background: #FF8C00; color: #000; }
-        .work-hours {
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            display: inline-flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            border: 1px solid rgba(255,140,0,0.4);
-        }
+        .work-hours { background: rgba(0,0,0,0.7); padding: 10px 20px; display: inline-flex; flex-wrap: wrap; gap: 12px; border: 1px solid rgba(255,140,0,0.4); }
         .hours-text { color: #FF8C00; font-weight: 600; }
-        .global-delivery {
-            padding: 20px;
-            border-top: 1px solid rgba(255,140,0,0.2);
-            border-bottom: 1px solid rgba(255,140,0,0.2);
-            background: rgba(0,0,0,0.3);
-            margin-top: 30px;
-        }
+        .global-delivery { padding: 20px; border-top: 1px solid rgba(255,140,0,0.2); border-bottom: 1px solid rgba(255,140,0,0.2); background: rgba(0,0,0,0.3); margin-top: 30px; }
         .delivery-text { font-size: 1.2rem; font-weight: 600; color: #FF8C00; }
+        .delivery-icon { font-size: 2rem; display: inline-block; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         /* круглая кнопка */
-        .callback-fixed {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 200;
-        }
-        .callback-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-        .callback-btn {
-            background: #FF8C00;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 4px 12px rgba(255,140,0,0.4);
-        }
-        .callback-text {
-            background: #FF8C00;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            white-space: nowrap;
-            opacity: 0;
-            transform: translateX(15px);
-            transition: 0.3s;
-        }
+        .callback-fixed { position: fixed; bottom: 20px; right: 20px; z-index: 200; }
+        .callback-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .callback-btn { background: #FF8C00; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(255,140,0,0.4); }
+        .callback-text { background: #FF8C00; padding: 6px 16px; border-radius: 30px; font-weight: 600; white-space: nowrap; opacity: 0; transform: translateX(15px); transition: 0.3s; }
         .callback-wrapper:hover .callback-text { opacity: 1; transform: translateX(0); }
 
         /* Модальные окна */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.96);
-            z-index: 10000;
-            overflow-y: auto;
-            justify-content: center;
-            align-items: center;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 10000; overflow-y: auto; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content {
-            width: 90%;
-            max-width: 800px;
-            background: #0f0f0f;
-            border: 1px solid #FF8C00;
-            border-radius: 20px;
-            margin: 20px auto;
-            padding: 30px 20px;
-            position: relative;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        .modal-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 2rem;
-            color: #FF8C00;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
+        .modal-content { width: 90%; max-width: 800px; background: #0f0f0f; border: 1px solid #FF8C00; border-radius: 20px; margin: 20px auto; padding: 30px 20px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 12px; right: 12px; font-size: 2rem; color: #FF8C00; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         .modal-close:hover { background: rgba(255,140,0,0.2); }
         .modal-title { font-size: 1.8rem; text-align: center; color: #FF8C00; margin-bottom: 20px; font-family: 'Anton', sans-serif; }
         .modal-subtitle { font-size: 1.2rem; border-left: 3px solid #FF8C00; padding-left: 12px; margin: 20px 0 12px; color: #FF8C00; }
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            background: rgba(255,140,0,0.05);
-            padding: 15px;
-            border-radius: 12px;
-        }
+        .specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: rgba(255,140,0,0.05); padding: 15px; border-radius: 12px; }
         .spec-item { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,140,0,0.2); padding: 5px 0; }
         .spec-label { color: #FF8C00; font-weight: 600; }
         .price-badge { font-size: 1.8rem; text-align: center; color: #FF8C00; background: rgba(255,140,0,0.1); padding: 8px; border-radius: 40px; margin: 15px 0; }
@@ -316,42 +79,20 @@
         .catalog-item h4 { color: #FF8C00; margin-bottom: 8px; }
         .catalog-price { font-size: 1.2rem; font-weight: bold; margin: 10px 0; color: #FF8C00; }
         .add-to-cart { background: #FF8C00; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 600; cursor: pointer; }
+
         /* Корзина */
-        .cart-item {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,140,0,0.2);
-            padding: 12px 0;
-            gap: 10px;
-        }
+        .cart-item { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,140,0,0.2); padding: 12px 0; gap: 10px; }
         .cart-item-info { flex: 2; min-width: 150px; }
         .cart-item-price { flex: 1; text-align: right; min-width: 80px; }
         .cart-item-actions { display: flex; gap: 8px; }
-        .cart-remove {
-            background: transparent;
-            border: 1px solid #FF8C00;
-            color: #FF8C00;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
+        .cart-remove { background: transparent; border: 1px solid #FF8C00; color: #FF8C00; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; }
         .cart-remove:hover { background: rgba(255,140,0,0.2); }
         .cart-total { margin-top: 15px; padding-top: 15px; border-top: 2px solid #FF8C00; text-align: right; font-size: 1.2rem; color: #FF8C00; }
+
         .form-group { margin-bottom: 15px; }
         .form-group input { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #FF8C00; border-radius: 8px; color: #fff; font-size: 1rem; }
         .submit-btn { background: #FF8C00; border: none; padding: 10px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; }
-        .mud-tracks {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 40px;
-            background: repeating-linear-gradient(45deg, rgba(60,35,15,0.3) 0px, rgba(60,35,15,0.3) 12px, transparent 12px, transparent 24px);
-            pointer-events: none;
-        }
+        .mud-tracks { position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background: repeating-linear-gradient(45deg, rgba(60,35,15,0.3) 0px, rgba(60,35,15,0.3) 12px, transparent 12px, transparent 24px); pointer-events: none; }
     </style>
 </head>
 <body>
@@ -387,12 +128,17 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНЫЕ ОКНА -->
+    <!-- МОДАЛЬНЫЕ ОКНА (базовые) -->
     <div id="cartModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="cartModal">&times;</div><div class="modal-title">🛒 КОРЗИНА</div><div id="cartItemsContainer"></div></div></div>
     <div id="catalogModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="catalogModal">&times;</div><div class="modal-title">📚 КАТАЛОГ МОТОТЕХНИКИ</div><div id="catalogGrid" class="catalog-grid"></div></div></div>
     <div id="eventsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="eventsModal">&times;</div><div class="modal-title">🏁 СОБЫТИЯ</div><div id="eventsList"></div></div></div>
-    
-    <!-- ПОЛЬЗОВАТЕЛЬСКОЕ МОДАЛЬНОЕ ОКНО (Firebase) -->
+    <div id="callbackModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="callbackModal">&times;</div><div class="modal-title">📞 ЗАКАЗАТЬ ЗВОНОК</div><form id="callbackFormFixed"><div class="form-group"><label>Имя</label><input type="text" id="callbackNameFixed" required></div><div class="form-group"><label>Телефон</label><input type="tel" id="callbackPhoneFixed" required></div><div class="form-group"><label>Удобное время</label><input type="text" id="callbackTimeFixed"></div><button type="submit" class="submit-btn">ОТПРАВИТЬ</button></form></div></div>
+    <div id="aboutModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="aboutModal">&times;</div><div class="modal-title">МОТОРУМ — место силы</div><div class="modal-text">Мотосалон нового формата. Адрес: д. Тарасково, Центральная ул., с1А. График: Ср–Вс 10:30–19:30. Тел: +7 977 465-79-72.</div></div></div>
+    <div id="deliveryModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="deliveryModal">&times;</div><div class="modal-title">ДОСТАВКА</div><div class="modal-text">📍 По Москве в пределах МКАД — БЕСПЛАТНО!<br>📍 По России — по договоренности при 100% предоплате.</div></div></div>
+    <div id="contactsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="contactsModal">&times;</div><div class="modal-title">КОНТАКТЫ</div><div>📞 +7 977 465-79-72</div><div>📍 д. Тарасково, Центральная ул., с1А</div><div>🕐 Ср-Вс 10:30–19:30</div><div>📱 Telegram: <a href="https://t.me/motorum_official" target="_blank" style="color:#FF8C00;">@motorum_official</a></div></div></div>
+    <div id="servicesModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="servicesModal">&times;</div><div class="modal-title">🛠 НАШИ УСЛУГИ</div><div class="modal-text">Доставка, сборка, постановка на учёт, консультации. Звоните: +7 977 465-79-72</div></div></div>
+
+    <!-- ПОЛЬЗОВАТЕЛЬСКОЕ ОКНО (Firebase) -->
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="userModal">&times;</div>
@@ -401,22 +147,16 @@
         </div>
     </div>
 
-    <div id="callbackModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="callbackModal">&times;</div><div class="modal-title">📞 ЗАКАЗАТЬ ЗВОНОК</div><form id="callbackFormFixed"><div class="form-group"><label>Имя</label><input type="text" id="callbackNameFixed" required></div><div class="form-group"><label>Телефон</label><input type="tel" id="callbackPhoneFixed" required></div><div class="form-group"><label>Удобное время</label><input type="text" id="callbackTimeFixed"></div><button type="submit" class="submit-btn">ОТПРАВИТЬ</button></form></div></div>
-    <div id="aboutModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="aboutModal">&times;</div><div class="modal-title">МОТОРУМ — место силы</div><div class="modal-text">Мотосалон нового формата. Адрес: д. Тарасково, Центральная ул., с1А. График: Ср–Вс 10:30–19:30. Тел: +7 977 465-79-72.</div></div></div>
-    <div id="deliveryModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="deliveryModal">&times;</div><div class="modal-title">ДОСТАВКА</div><div class="modal-text">📍 По Москве в пределах МКАД — БЕСПЛАТНО!<br>📍 По России — по договоренности при 100% предоплате.</div></div></div>
-    <div id="contactsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="contactsModal">&times;</div><div class="modal-title">КОНТАКТЫ</div><div>📞 +7 977 465-79-72</div><div>📍 д. Тарасково, Центральная ул., с1А</div><div>🕐 Ср-Вс 10:30–19:30</div><div>📱 Telegram: <a href="https://t.me/motorum_official" target="_blank" style="color:#FF8C00;">@motorum_official</a></div></div></div>
-    <div id="servicesModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="servicesModal">&times;</div><div class="modal-title">🛠 НАШИ УСЛУГИ</div><div class="modal-text">Мы предоставляем полный спектр услуг для вашего мотоцикла:</div><ul style="margin-left: 20px; color:#ccc;"><li>🚚 Доставка мототехники по Москве и области</li><li>🔧 Профессиональная сборка и предпродажная подготовка</li><li>📋 Помощь в постановке на учёт в ГИБДД</li><li>🛠 Консультации по выбору и обслуживанию</li></ul><div class="modal-text" style="margin-top:15px;">Звоните: +7 977 465-79-72</div></div></div>
-
-    <!-- КАРТОЧКИ ТОВАРОВ (Six Days, Crosstrec, Spitfire) – тут они есть, но для краткости не дублирую, они будут в полном коде -->
-    <!-- ... (карточки такие же, как в предыдущей версии) ... -->
+    <!-- КАРТОЧКИ ТОВАРОВ (краткие, но достаточные) -->
+    <div id="sixDaysModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="sixDaysModal">&times;</div><div class="modal-title">🏍️ REGULMOTO SIX DAYS</div><div class="price-badge">🔥 349 000 ₽ 🔥</div><div class="modal-text">🚚 Доставка по Москве (МКАД) бесплатно. Новинка 2025. Требуется категория "А".</div><div class="specs-grid"><div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div><div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 см³</span></div><div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">31 л.с.</span></div><div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ст.</span></div><div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">125 кг</span></div></div><div class="button-group"><button class="cart-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">🛒 В КОРЗИНУ</button><button class="buy-btn" data-id="sixdays" data-name="Regulmoto SIX DAYS" data-price="349000">💳 КУПИТЬ</button></div></div></div>
+    <div id="crosstrecModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="crosstrecModal">&times;</div><div class="modal-title">🏍️ REGULMOTO CROSSTREC NB350</div><div class="price-badge">🔥 331 000 ₽ 🔥</div><div class="modal-text">🚚 Доставка по Москве бесплатно. Новинка 2026. Требуется категория "А".</div><div class="specs-grid"><div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">Zongshen NB350</span></div><div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">315 см³</span></div><div class="spec-item"><span class="spec-label">Мощность</span><span class="spec-value">32 л.с.</span></div><div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ст.</span></div><div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value">127 кг</span></div></div><div class="button-group"><button class="cart-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">🛒 В КОРЗИНУ</button><button class="buy-btn" data-id="crosstrec" data-name="Regulmoto CROSSTREC NB350" data-price="331000">💳 КУПИТЬ</button></div></div></div>
+    <div id="spitfireModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="spitfireModal">&times;</div><div class="modal-title">🔥 ПИТБАЙК REGULMOTO SPITFIRE 17/14</div><div class="price-badge">🔥 105 000 ₽ 🔥</div><div class="modal-text">Спортинвентарь. Категория А не нужна. В наличии.</div><div class="specs-grid"><div class="spec-item"><span class="spec-label">Двигатель</span><span class="spec-value">139FMB</span></div><div class="spec-item"><span class="spec-label">Объем</span><span class="spec-value">49 см³</span></div><div class="spec-item"><span class="spec-label">КПП</span><span class="spec-value">6 ст.</span></div><div class="spec-item"><span class="spec-label">Старт</span><span class="spec-value">Электро/кик</span></div></div><div class="button-group"><button class="cart-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">🛒 В КОРЗИНУ</button><button class="buy-btn" data-id="spitfire" data-name="Regulmoto SPITFIRE 17/14" data-price="105000">💳 КУПИТЬ</button></div></div></div>
 
     <div class="mud-tracks"></div>
 
     <div class="main-content">
         <div class="hero">
-            <div class="motorum-wrapper">
-                <span class="motorum-letter">М</span><span class="motorum-letter">О</span><span class="motorum-letter">Т</span><span class="motorum-letter">О</span><span class="motorum-letter">Р</span><span class="motorum-letter">У</span><span class="motorum-letter">М</span>
-            </div>
+            <div class="motorum-wrapper"><span class="motorum-letter">М</span><span class="motorum-letter">О</span><span class="motorum-letter">Т</span><span class="motorum-letter">О</span><span class="motorum-letter">Р</span><span class="motorum-letter">У</span><span class="motorum-letter">М</span></div>
             <div class="hero-sub">HARD ENDURO EQUIPMENT</div>
         </div>
         <div class="extreme-tags">
@@ -433,12 +173,26 @@
         </div>
         <div class="global-delivery">
             <div class="delivery-icon">🌍🏍️</div>
-            <div class="delivery-text">ДОСТАВКА МОТОТЕХНИКИ ПО МОСКВЕ В ПРЕДЕЛАХ МКАД — БЕСПЛАТНО</div>
+            <div class="delivery-text">ДОСТАВКА ПО МОСКВЕ (В ПРЕДЕЛАХ МКАД) — БЕСПЛАТНО</div>
             <div class="delivery-sub">По России — по договоренности при 100% предоплате</div>
         </div>
     </div>
 
     <script>
+        // ======================= ИНИЦИАЛИЗАЦИЯ FIREBASE =======================
+        const firebaseConfig = {
+            apiKey: "AIzaSyB4lw4Ktiz4pqJ0JShKOUalZG9GxbT5oZE",
+            authDomain: "motorum-site.firebaseapp.com",
+            projectId: "motorum-site",
+            storageBucket: "motorum-site.firebasestorage.app",
+            messagingSenderId: "585700757777",
+            appId: "1:585700757777:web:d9341cea37ceabdbbdfcb0",
+            measurementId: "G-ZGQEJB1ZP5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         // ======================= EMAILJS =======================
         emailjs.init({ publicKey: "QJIjE9EbXedKM5jp3" });
         const SERVICE_ID = "service_tb65axe";
@@ -448,8 +202,8 @@
         async function sendOrderEmail(name, phone, address, itemsText, total) {
             try {
                 const res = await emailjs.send(SERVICE_ID, ORDER_TEMPLATE, { name, phone, address, items_text: itemsText, total });
-                if(res.status === 200) { alert("Спасибо за заказ! Наш менеджер свяжется с вами в ближайшее время."); return true; }
-            } catch(e) { alert("❌ Ошибка отправки. Позвоните нам: +7 977 465-79-72"); return false; }
+                if(res.status === 200) { alert("Спасибо за заказ! Наш менеджер свяжется с вами."); return true; }
+            } catch(e) { alert("❌ Ошибка отправки. Позвоните: +7 977 465-79-72"); return false; }
         }
         async function sendCallbackEmail(name, phone, time) {
             try {
@@ -484,7 +238,7 @@
             container.innerHTML = html;
             document.getElementById('checkoutBtn').onclick = async () => {
                 const name = prompt("Ваше имя:"); if(!name) return;
-                const phone = prompt("Телефон для связи:"); if(!phone) return;
+                const phone = prompt("Телефон:"); if(!phone) return;
                 const address = prompt("Адрес доставки:"); if(!address) return;
                 let itemsText = "";
                 cart.forEach(i => itemsText += `${i.name} — ${i.quantity} шт. — ${i.price.toLocaleString()} ₽\n`);
@@ -499,30 +253,17 @@
             { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
             { id: "spitfire", name: "Regulmoto SPITFIRE 17/14", price: 105000, modalId: "spitfireModal" }
         ];
-        async function renderCatalogModal() {
+        function renderCatalogModal() {
             const grid = document.getElementById('catalogGrid');
             if(!grid) return;
-            grid.innerHTML = products.map(p => `
-                <div class="catalog-item" data-modal="${p.modalId}">
-                    <h4>${p.name}</h4>
-                    <div class="catalog-price">${p.price.toLocaleString()} ₽</div>
-                    <button class="add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">+ В корзину</button>
-                </div>
-            `).join('');
-            document.querySelectorAll('.catalog-item').forEach(card => {
-                card.onclick = (e) => { if(!e.target.classList.contains('add-to-cart')) openModal(document.getElementById(card.dataset.modal)); };
-            });
-            document.querySelectorAll('.add-to-cart').forEach(btn => {
-                btn.onclick = (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); };
-            });
+            grid.innerHTML = products.map(p => `<div class="catalog-item" data-modal="${p.modalId}"><h4>${p.name}</h4><div class="catalog-price">${p.price.toLocaleString()} ₽</div><button class="add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">+ В корзину</button></div>`).join('');
+            document.querySelectorAll('.catalog-item').forEach(card => { card.onclick = (e) => { if(!e.target.classList.contains('add-to-cart')) openModal(document.getElementById(card.dataset.modal)); }; });
+            document.querySelectorAll('.add-to-cart').forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); }; });
         }
-        function renderEventsModal() {
-            document.getElementById('eventsList').innerHTML = `<div>📅 15 июня 2026 — Эндуро-кросс в Тарасково</div><div>📅 3 июля 2026 — Мотобратва, трек-день</div><div>📅 22 августа 2026 — Фестиваль «Грязь и газ», Калужская область</div>`;
-        }
+        function renderEventsModal() { document.getElementById('eventsList').innerHTML = `<div>📅 15.06.2026 — Эндуро-кросс в Тарасково</div><div>📅 03.07.2026 — Мотобратва, трек-день</div><div>📅 22.08.2026 — Фестиваль «Грязь и газ», Калуга</div>`; }
 
-        // ======================= FIREBASE (ГЛОБАЛЬНЫЙ ОБЪЕКТ) =======================
+        // ======================= FIREBASE: РЕГИСТРАЦИЯ И ЛИЧНЫЙ КАБИНЕТ =======================
         let currentUser = null;
-
         function renderUserModal() {
             const container = document.getElementById('userContent');
             const title = document.getElementById('userModalTitle');
@@ -537,9 +278,9 @@
                         <div class="modal-text">📞 ${data.phone || 'не указан'}</div>
                         <div class="modal-text">🏙️ Город: ${data.city || 'не указан'}</div>
                         <div class="modal-text">🏠 Адрес доставки: ${data.address || 'не указан'}</div>
-                        <button class="submit-btn" id="firebaseLogoutBtn" style="margin-top: 20px;">🚪 ВЫЙТИ</button>
+                        <button class="submit-btn" id="firebaseLogoutBtn" style="margin-top:20px;">🚪 ВЫЙТИ</button>
                     `;
-                    document.getElementById('firebaseLogoutBtn').onclick = () => { auth.signOut(); };
+                    document.getElementById('firebaseLogoutBtn').onclick = () => auth.signOut();
                 });
             } else {
                 title.innerText = 'ВХОД / РЕГИСТРАЦИЯ';
@@ -550,7 +291,7 @@
                         <div class="form-group"><label>Пароль</label><input type="password" id="loginPassword" required></div>
                         <button type="submit" class="submit-btn">ВОЙТИ</button>
                     </form>
-                    <div class="modal-subtitle" style="margin-top: 20px;">РЕГИСТРАЦИЯ</div>
+                    <div class="modal-subtitle" style="margin-top:20px;">РЕГИСТРАЦИЯ</div>
                     <form id="firebaseRegisterForm">
                         <div class="form-group"><label>ФИО</label><input type="text" id="regFullName" required></div>
                         <div class="form-group"><label>Email</label><input type="email" id="regEmail" required></div>
@@ -564,12 +305,9 @@
                 document.getElementById('firebaseLoginForm').onsubmit = async (e) => {
                     e.preventDefault();
                     const email = document.getElementById('loginEmail').value;
-                    const password = document.getElementById('loginPassword').value;
-                    try {
-                        await auth.signInWithEmailAndPassword(email, password);
-                        alert("✅ Добро пожаловать!");
-                        closeModal(document.getElementById('userModal'));
-                    } catch(err) { alert("❌ Ошибка входа: " + err.message); }
+                    const pwd = document.getElementById('loginPassword').value;
+                    try { await auth.signInWithEmailAndPassword(email, pwd); alert("✅ Добро пожаловать!"); closeModal(document.getElementById('userModal')); } 
+                    catch(err) { alert("❌ Ошибка: " + err.message); }
                 };
                 document.getElementById('firebaseRegisterForm').onsubmit = async (e) => {
                     e.preventDefault();
@@ -578,37 +316,29 @@
                     const phone = document.getElementById('regPhone').value;
                     const city = document.getElementById('regCity').value;
                     const address = document.getElementById('regAddress').value;
-                    const password = document.getElementById('regPassword').value;
+                    const pwd = document.getElementById('regPassword').value;
                     try {
-                        const cred = await auth.createUserWithEmailAndPassword(email, password);
+                        const cred = await auth.createUserWithEmailAndPassword(email, pwd);
                         await db.collection("users").doc(cred.user.uid).set({ fullName, phone, city, address, email });
-                        alert(`✅ Регистрация успешна! Добро пожаловать, ${fullName}!`);
+                        alert(`✅ Добро пожаловать, ${fullName}!`);
                         closeModal(document.getElementById('userModal'));
-                    } catch(err) { alert("❌ Ошибка регистрации: " + err.message); }
+                    } catch(err) { alert("❌ Ошибка: " + err.message); }
                 };
             }
         }
+        auth.onAuthStateChanged(user => { currentUser = user; if(document.getElementById('userModal').classList.contains('active')) renderUserModal(); });
 
-        auth.onAuthStateChanged(user => {
-            currentUser = user;
-            const modal = document.getElementById('userModal');
-            if (modal && modal.classList.contains('active')) renderUserModal();
-        });
-
-        // ======================= ОБЩИЕ ФУНКЦИИ МОДАЛОК =======================
+        // ======================= ОБЩИЕ ФУНКЦИИ ДЛЯ МОДАЛОК =======================
         function closeModal(modal) { if(modal) modal.classList.remove('active'); document.body.style.overflow = ''; }
         function openModal(modal) { if(modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; } }
-
-        document.querySelectorAll('.modal-close').forEach(btn => {
-            btn.onclick = () => { const id = btn.dataset.modal; if(id) closeModal(document.getElementById(id)); else closeModal(btn.closest('.modal')); };
-        });
+        document.querySelectorAll('.modal-close').forEach(btn => { btn.onclick = () => { const id = btn.dataset.modal; if(id) closeModal(document.getElementById(id)); else closeModal(btn.closest('.modal')); }; });
         document.querySelectorAll('.modal').forEach(m => { m.onclick = (e) => { if(e.target === m) closeModal(m); }; });
         document.addEventListener('keydown', (e) => { if(e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(m => closeModal(m)); });
 
         // НАВИГАЦИЯ
         document.getElementById('homeLink')?.onclick = (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); };
         document.getElementById('homeLinkNav')?.onclick = (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); };
-        document.getElementById('catalogLink')?.onclick = async (e) => { e.preventDefault(); await renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
+        document.getElementById('catalogLink')?.onclick = (e) => { e.preventDefault(); renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
         document.getElementById('servicesLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('servicesModal')); };
         document.getElementById('eventsLink')?.onclick = (e) => { e.preventDefault(); renderEventsModal(); openModal(document.getElementById('eventsModal')); };
         document.getElementById('aboutLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('aboutModal')); };
@@ -617,16 +347,14 @@
         document.getElementById('userIcon')?.onclick = (e) => { e.preventDefault(); renderUserModal(); openModal(document.getElementById('userModal')); };
         document.getElementById('cartIcon')?.onclick = () => { renderCartModal(); openModal(document.getElementById('cartModal')); };
         document.getElementById('callbackFixedBtn')?.onclick = () => openModal(document.getElementById('callbackModal'));
-        document.getElementById('btnBikes')?.onclick = async () => { await renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
+        document.getElementById('btnBikes')?.onclick = () => { renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
         document.querySelector('.work-hours')?.onclick = () => alert("Ср-Вс 10:30–19:30, Пн-Вт выходные");
-
         document.getElementById('callbackFormFixed')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await sendCallbackEmail(document.getElementById('callbackNameFixed').value, document.getElementById('callbackPhoneFixed').value, document.getElementById('callbackTimeFixed').value);
             closeModal(document.getElementById('callbackModal'));
             e.target.reset();
         });
-
         updateCartCount();
     </script>
 </body>
