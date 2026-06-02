@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>МОТОРУМ | Эндуро мототехника</title>
-    <!-- Firebase SDK (модули) -->
+    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ВАША КОНФИГУРАЦИЯ FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyB4lw4Ktiz4pqJ0JShKOUalZG9GxbT5oZE",
             authDomain: "motorum-site.firebaseapp.com",
@@ -25,7 +24,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Делаем сервисы глобальными для использования в обычном скрипте
         window.firebaseAuth = auth;
         window.firebaseDb = db;
         window.firebaseSignOut = signOut;
@@ -425,7 +423,7 @@
     <div id="catalogModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="catalogModal">&times;</div><div class="modal-title">📚 КАТАЛОГ МОТОТЕХНИКИ</div><div id="catalogGrid" class="catalog-grid"></div></div></div>
     <div id="eventsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="eventsModal">&times;</div><div class="modal-title">🏁 СОБЫТИЯ</div><div id="eventsList"></div></div></div>
     
-    <!-- ПОЛЬЗОВАТЕЛЬСКОЕ МОДАЛЬНОЕ ОКНО (ДОРАБОТАНО) -->
+    <!-- ПОЛЬЗОВАТЕЛЬСКОЕ МОДАЛЬНОЕ ОКНО (Firebase регистрация/вход) -->
     <div id="userModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="userModal">&times;</div>
@@ -440,7 +438,7 @@
     <div id="contactsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="contactsModal">&times;</div><div class="modal-title">КОНТАКТЫ</div><div>📞 +7 977 465-79-72</div><div>📍 д. Тарасково, Центральная ул., с1А</div><div>🕐 Ср-Вс 10:30–19:30</div><div>📱 Telegram: <a href="https://t.me/motorum_official" target="_blank" style="color:#FF8C00;">@motorum_official</a></div></div></div>
     <div id="servicesModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="servicesModal">&times;</div><div class="modal-title">🛠 НАШИ УСЛУГИ</div><div class="modal-text">Мы предоставляем полный спектр услуг для вашего мотоцикла:</div><ul style="margin-left: 20px; color:#ccc;"><li>🚚 Доставка мототехники по Москве и области</li><li>🔧 Профессиональная сборка и предпродажная подготовка</li><li>📋 Помощь в постановке на учёт в ГИБДД</li><li>🛠 Консультации по выбору и обслуживанию</li></ul><div class="modal-text" style="margin-top:15px;">Звоните: +7 977 465-79-72</div></div></div>
 
-    <!-- КАРТОЧКИ ТОВАРОВ -->
+    <!-- КАРТОЧКИ ТОВАРОВ (Six Days, Crosstrec, Spitfire) -->
     <div id="sixDaysModal" class="modal">
         <div class="modal-content">
             <div class="modal-close" data-modal="sixDaysModal">&times;</div>
@@ -519,10 +517,8 @@
     </div>
 
     <script>
-        // ======================= EMAILJS (остаётся без изменений) =======================
-        emailjs.init({
-            publicKey: "QJIjE9EbXedKM5jp3"
-        });
+        // ======================= EMAILJS (работает) =======================
+        emailjs.init({ publicKey: "QJIjE9EbXedKM5jp3" });
         const SERVICE_ID = "service_tb65axe";
         const ORDER_TEMPLATE = "template_sg332h2";
         const CALLBACK_TEMPLATE = "template_w073gqp";
@@ -530,10 +526,7 @@
         async function sendOrderEmail(name, phone, address, itemsText, total) {
             try {
                 const res = await emailjs.send(SERVICE_ID, ORDER_TEMPLATE, { name, phone, address, items_text: itemsText, total });
-                if(res.status === 200) {
-                    alert("Спасибо за заказ! Наш менеджер свяжется с вами в ближайшее время.");
-                    return true;
-                }
+                if(res.status === 200) { alert("Спасибо за заказ! Наш менеджер свяжется с вами в ближайшее время."); return true; }
             } catch(e) { alert("❌ Ошибка отправки. Позвоните нам: +7 977 465-79-72"); return false; }
         }
         async function sendCallbackEmail(name, phone, time) {
@@ -543,7 +536,7 @@
             } catch(e) { alert("❌ Ошибка. Позвоните: +7 977 465-79-72"); return false; }
         }
 
-        // ======================= ЛОГИКА КОРЗИНЫ (без изменений) =======================
+        // ======================= КОРЗИНА (полностью рабочая) =======================
         let cart = JSON.parse(localStorage.getItem('motorum_cart')) || [];
         function saveCart() { localStorage.setItem('motorum_cart', JSON.stringify(cart)); updateCartCount(); }
         function updateCartCount() { document.getElementById('cartCount').innerText = cart.reduce((s,i)=>s+i.quantity,0); }
@@ -563,17 +556,7 @@
             cart.forEach((item, idx) => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info"><strong>${item.name}</strong><br>${item.price.toLocaleString()} ₽ × ${item.quantity}</div>
-                        <div class="cart-item-price">${itemTotal.toLocaleString()} ₽</div>
-                        <div class="cart-item-actions">
-                            <button class="cart-remove" onclick="updateQuantity(${idx}, -1)">-</button>
-                            <button class="cart-remove" onclick="updateQuantity(${idx}, 1)">+</button>
-                            <button class="cart-remove" onclick="removeFromCart(${idx})">🗑️</button>
-                        </div>
-                    </div>
-                `;
+                html += `<div class="cart-item"><div class="cart-item-info"><strong>${item.name}</strong><br>${item.price.toLocaleString()} ₽ × ${item.quantity}</div><div class="cart-item-price">${itemTotal.toLocaleString()} ₽</div><div class="cart-item-actions"><button class="cart-remove" onclick="updateQuantity(${idx}, -1)">-</button><button class="cart-remove" onclick="updateQuantity(${idx}, 1)">+</button><button class="cart-remove" onclick="removeFromCart(${idx})">🗑️</button></div></div>`;
             });
             html += `<div class="cart-total">ИТОГО: ${total.toLocaleString()} ₽</div><div style="margin-top:15px; text-align:right;"><button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button></div>`;
             container.innerHTML = html;
@@ -588,7 +571,7 @@
             };
         }
 
-        // ======================= КАТАЛОГ (без изменений) =======================
+        // ======================= КАТАЛОГ (работает) =======================
         const products = [
             { id: "sixdays", name: "Regulmoto SIX DAYS", price: 349000, modalId: "sixDaysModal" },
             { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
@@ -620,18 +603,15 @@
             `;
         }
 
-        // ======================= FIREBASE: РЕГИСТРАЦИЯ / ВХОД / ПРОФИЛЬ =======================
+        // ======================= FIREBASE: РЕГИСТРАЦИЯ/ВХОД (без поломок) =======================
         let currentFirebaseUser = null;
 
         function renderUserModal() {
             const container = document.getElementById('userContent');
             const title = document.getElementById('userModalTitle');
             if (!container) return;
-
             if (currentFirebaseUser) {
-                // Если пользователь авторизован – показываем личный кабинет
                 title.innerText = '👤 ЛИЧНЫЙ КАБИНЕТ';
-                // Загружаем данные профиля из Firestore
                 (async () => {
                     const userDoc = await window.getDoc(window.doc(window.firebaseDb, "users", currentFirebaseUser.uid));
                     const userData = userDoc.exists() ? userDoc.data() : {};
@@ -651,7 +631,6 @@
                     });
                 })();
             } else {
-                // Форма входа / регистрации
                 title.innerText = 'ВХОД / РЕГИСТРАЦИЯ';
                 container.innerHTML = `
                     <div class="modal-subtitle">ВХОД</div>
@@ -671,22 +650,16 @@
                         <button type="submit" class="submit-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button>
                     </form>
                 `;
-
-                // Обработчик входа
                 document.getElementById('firebaseLoginForm').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const email = document.getElementById('loginEmail').value;
                     const password = document.getElementById('loginPassword').value;
                     try {
-                        const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
-                        alert(`✅ Добро пожаловать, ${userCredential.user.email}!`);
+                        await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                        alert(`✅ Добро пожаловать!`);
                         closeModal(document.getElementById('userModal'));
-                    } catch (error) {
-                        alert(`❌ Ошибка входа: ${error.message}`);
-                    }
+                    } catch (error) { alert(`❌ Ошибка входа: ${error.message}`); }
                 });
-
-                // Обработчик регистрации
                 document.getElementById('firebaseRegisterForm').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const fullName = document.getElementById('regFullName').value;
@@ -695,38 +668,25 @@
                     const city = document.getElementById('regCity').value;
                     const address = document.getElementById('regAddress').value;
                     const password = document.getElementById('regPassword').value;
-
                     try {
                         const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
-                        const user = userCredential.user;
-                        // Сохраняем доп. данные в Firestore
-                        await window.setDoc(window.doc(window.firebaseDb, "users", user.uid), {
-                            fullName: fullName,
-                            phone: phone,
-                            city: city,
-                            address: address,
-                            email: email
+                        await window.setDoc(window.doc(window.firebaseDb, "users", userCredential.user.uid), {
+                            fullName, phone, city, address, email
                         });
-                        alert(`✅ Регистрация прошла успешно! Добро пожаловать, ${fullName}!`);
+                        alert(`✅ Регистрация успешна! Добро пожаловать, ${fullName}!`);
                         closeModal(document.getElementById('userModal'));
-                    } catch (error) {
-                        alert(`❌ Ошибка регистрации: ${error.message}`);
-                    }
+                    } catch (error) { alert(`❌ Ошибка регистрации: ${error.message}`); }
                 });
             }
         }
 
-        // Следим за состоянием авторизации
         window.onAuthStateChanged(window.firebaseAuth, (user) => {
             currentFirebaseUser = user;
-            // Если модальное окно открыто, обновляем его содержимое
             const modal = document.getElementById('userModal');
-            if (modal && modal.classList.contains('active')) {
-                renderUserModal();
-            }
+            if (modal && modal.classList.contains('active')) renderUserModal();
         });
 
-        // ======================= ОБЩИЕ ФУНКЦИИ ДЛЯ МОДАЛОК =======================
+        // ======================= ОБЩИЕ ФУНКЦИИ МОДАЛОК =======================
         function closeModal(modal) { if(modal) modal.classList.remove('active'); document.body.style.overflow = ''; }
         function openModal(modal) { if(modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; } }
 
