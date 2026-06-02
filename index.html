@@ -4,6 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>МОТОРУМ | Эндуро мототехника</title>
+    <!-- Firebase SDK (модули) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ВАША КОНФИГУРАЦИЯ FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyB4lw4Ktiz4pqJ0JShKOUalZG9GxbT5oZE",
+            authDomain: "motorum-site.firebaseapp.com",
+            projectId: "motorum-site",
+            storageBucket: "motorum-site.firebasestorage.app",
+            messagingSenderId: "585700757777",
+            appId: "1:585700757777:web:d9341cea37ceabdbbdfcb0",
+            measurementId: "G-ZGQEJB1ZP5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Делаем сервисы глобальными для использования в обычном скрипте
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseSignOut = signOut;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+    </script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * {
@@ -392,7 +424,16 @@
     <div id="cartModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="cartModal">&times;</div><div class="modal-title">🛒 КОРЗИНА</div><div id="cartItemsContainer"></div></div></div>
     <div id="catalogModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="catalogModal">&times;</div><div class="modal-title">📚 КАТАЛОГ МОТОТЕХНИКИ</div><div id="catalogGrid" class="catalog-grid"></div></div></div>
     <div id="eventsModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="eventsModal">&times;</div><div class="modal-title">🏁 СОБЫТИЯ</div><div id="eventsList"></div></div></div>
-    <div id="userModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="userModal">&times;</div><div class="modal-title">ВХОД / РЕГИСТРАЦИЯ</div><div id="userContent"></div></div></div>
+    
+    <!-- ПОЛЬЗОВАТЕЛЬСКОЕ МОДАЛЬНОЕ ОКНО (ДОРАБОТАНО) -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-close" data-modal="userModal">&times;</div>
+            <div class="modal-title" id="userModalTitle">ВХОД / РЕГИСТРАЦИЯ</div>
+            <div id="userContent"></div>
+        </div>
+    </div>
+
     <div id="callbackModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="callbackModal">&times;</div><div class="modal-title">📞 ЗАКАЗАТЬ ЗВОНОК</div><form id="callbackFormFixed"><div class="form-group"><label>Имя</label><input type="text" id="callbackNameFixed" required></div><div class="form-group"><label>Телефон</label><input type="tel" id="callbackPhoneFixed" required></div><div class="form-group"><label>Удобное время</label><input type="text" id="callbackTimeFixed"></div><button type="submit" class="submit-btn">ОТПРАВИТЬ</button></form></div></div>
     <div id="aboutModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="aboutModal">&times;</div><div class="modal-title">МОТОРУМ — место силы</div><div class="modal-text">Мотосалон нового формата. Адрес: д. Тарасково, Центральная ул., с1А. График: Ср–Вс 10:30–19:30. Тел: +7 977 465-79-72.</div></div></div>
     <div id="deliveryModal" class="modal"><div class="modal-content"><div class="modal-close" data-modal="deliveryModal">&times;</div><div class="modal-title">ДОСТАВКА</div><div class="modal-text">📍 По Москве в пределах МКАД — БЕСПЛАТНО!<br>📍 По России — по договоренности при 100% предоплате.</div></div></div>
@@ -478,117 +519,53 @@
     </div>
 
     <script>
-        // ======================= ИНИЦИАЛИЗАЦИЯ EMAILJS =======================
+        // ======================= EMAILJS (остаётся без изменений) =======================
         emailjs.init({
             publicKey: "QJIjE9EbXedKM5jp3"
         });
+        const SERVICE_ID = "service_tb65axe";
+        const ORDER_TEMPLATE = "template_sg332h2";
+        const CALLBACK_TEMPLATE = "template_w073gqp";
 
-        const EMAILJS_SERVICE_ID = "service_tb65axe";
-        const EMAILJS_TEMPLATE_ORDER = "template_sg332h2";
-        const EMAILJS_TEMPLATE_CALLBACK = "template_w073gqp";
-
-        // Отправка заказа на почту (itemsText - строка)
         async function sendOrderEmail(name, phone, address, itemsText, total) {
-            const templateParams = {
-                name: name,
-                phone: phone,
-                address: address,
-                items_text: itemsText,
-                total: total
-            };
             try {
-                const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ORDER, templateParams);
-                if (response.status === 200) {
+                const res = await emailjs.send(SERVICE_ID, ORDER_TEMPLATE, { name, phone, address, items_text: itemsText, total });
+                if(res.status === 200) {
                     alert("Спасибо за заказ! Наш менеджер свяжется с вами в ближайшее время.");
                     return true;
-                } else {
-                    throw new Error("Ошибка отправки");
                 }
-            } catch (error) {
-                console.error("EmailJS error:", error);
-                alert("❌ Ошибка отправки заказа. Позвоните нам: +7 977 465-79-72");
-                return false;
-            }
+            } catch(e) { alert("❌ Ошибка отправки. Позвоните нам: +7 977 465-79-72"); return false; }
         }
-
-        // Отправка обратного звонка
         async function sendCallbackEmail(name, phone, time) {
-            const templateParams = { name, phone, time: time || "не указано" };
             try {
-                const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CALLBACK, templateParams);
-                if (response.status === 200) {
-                    alert("✅ Заявка принята! Скоро свяжемся.");
-                    return true;
-                } else {
-                    throw new Error();
-                }
-            } catch (error) {
-                console.error("EmailJS error:", error);
-                alert("❌ Ошибка отправки. Позвоните нам сами: +7 977 465-79-72");
-                return false;
-            }
+                const res = await emailjs.send(SERVICE_ID, CALLBACK_TEMPLATE, { name, phone, time: time || "не указано" });
+                if(res.status === 200) { alert("✅ Заявка принята! Скоро свяжемся."); return true; }
+            } catch(e) { alert("❌ Ошибка. Позвоните: +7 977 465-79-72"); return false; }
         }
 
-        // ======================= ЛОГИКА КОРЗИНЫ (с закрытием) =======================
+        // ======================= ЛОГИКА КОРЗИНЫ (без изменений) =======================
         let cart = JSON.parse(localStorage.getItem('motorum_cart')) || [];
-
-        function saveCart() {
-            localStorage.setItem('motorum_cart', JSON.stringify(cart));
-            updateCartCount();
-        }
-
-        function updateCartCount() {
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartCount').innerText = totalItems;
-        }
-
-        function addToCart(id, name, price) {
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.quantity++;
-            } else {
-                cart.push({ id, name, price, quantity: 1 });
-            }
+        function saveCart() { localStorage.setItem('motorum_cart', JSON.stringify(cart)); updateCartCount(); }
+        function updateCartCount() { document.getElementById('cartCount').innerText = cart.reduce((s,i)=>s+i.quantity,0); }
+        function addToCart(id,name,price) {
+            let item = cart.find(i=>i.id===id);
+            if(item) item.quantity++; else cart.push({id,name,price,quantity:1});
             saveCart();
             alert(`✅ ${name} добавлен в корзину!`);
         }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            saveCart();
-            renderCartModal();   // обновляем содержимое модалки
-        }
-
-        function updateQuantity(index, delta) {
-            if (cart[index].quantity + delta > 0) {
-                cart[index].quantity += delta;
-                saveCart();
-                renderCartModal();
-            } else if (cart[index].quantity + delta === 0) {
-                removeFromCart(index);
-            }
-        }
-
+        function removeFromCart(idx) { cart.splice(idx,1); saveCart(); renderCartModal(); }
+        function updateQuantity(idx,delta) { if(cart[idx].quantity+delta>0) { cart[idx].quantity+=delta; saveCart(); renderCartModal(); } }
         function renderCartModal() {
             const container = document.getElementById('cartItemsContainer');
-            if (!container) return;
-
-            if (cart.length === 0) {
-                container.innerHTML = '<div class="cart-empty">🛒 Корзина пуста</div>';
-                return;
-            }
-
-            let html = '';
-            let total = 0;
+            if(!container) return;
+            if(cart.length===0) { container.innerHTML='<div class="cart-empty">🛒 Корзина пуста</div>'; return; }
+            let html='', total=0;
             cart.forEach((item, idx) => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 html += `
                     <div class="cart-item">
-                        <div class="cart-item-info">
-                            <strong>${item.name}</strong><br>
-                            ${item.price.toLocaleString()} ₽ × ${item.quantity}
-                        </div>
+                        <div class="cart-item-info"><strong>${item.name}</strong><br>${item.price.toLocaleString()} ₽ × ${item.quantity}</div>
                         <div class="cart-item-price">${itemTotal.toLocaleString()} ₽</div>
                         <div class="cart-item-actions">
                             <button class="cart-remove" onclick="updateQuantity(${idx}, -1)">-</button>
@@ -598,57 +575,28 @@
                     </div>
                 `;
             });
-            html += `
-                <div class="cart-total">ИТОГО: ${total.toLocaleString()} ₽</div>
-                <div style="margin-top:15px; text-align:right;">
-                    <button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button>
-                </div>
-            `;
+            html += `<div class="cart-total">ИТОГО: ${total.toLocaleString()} ₽</div><div style="margin-top:15px; text-align:right;"><button class="submit-btn" id="checkoutBtn" style="width:auto;">📦 ОФОРМИТЬ ЗАКАЗ</button></div>`;
             container.innerHTML = html;
-
-            // Привязываем обработчик к новой кнопке
-            const checkoutBtn = document.getElementById('checkoutBtn');
-            if (checkoutBtn) {
-                checkoutBtn.onclick = async () => {
-                    const name = prompt("Ваше имя:");
-                    if (!name) return;
-                    const phone = prompt("Телефон для связи:");
-                    if (!phone) return;
-                    const address = prompt("Адрес доставки:");
-                    if (!address) return;
-
-                    // формируем текст товаров
-                    let itemsText = "";
-                    cart.forEach(item => {
-                        itemsText += `${item.name} — ${item.quantity} шт. — ${item.price.toLocaleString()} ₽\n`;
-                    });
-                    const totalAmount = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-
-                    const success = await sendOrderEmail(name, phone, address, itemsText, totalAmount);
-                    if (success) {
-                        // Очищаем корзину
-                        cart = [];
-                        saveCart();
-                        // Закрываем модальное окно корзины
-                        closeModal(document.getElementById('cartModal'));
-                        // Обновляем счётчик на иконке
-                        updateCartCount();
-                        // Чтобы при следующем открытии корзина была пустой, перерисовывать не нужно – она закроется
-                    }
-                };
-            }
+            document.getElementById('checkoutBtn').onclick = async () => {
+                const name = prompt("Ваше имя:"); if(!name) return;
+                const phone = prompt("Телефон для связи:"); if(!phone) return;
+                const address = prompt("Адрес доставки:"); if(!address) return;
+                let itemsText = "";
+                cart.forEach(i => itemsText += `${i.name} — ${i.quantity} шт. — ${i.price.toLocaleString()} ₽\n`);
+                const success = await sendOrderEmail(name, phone, address, itemsText, total);
+                if(success) { cart = []; saveCart(); closeModal(document.getElementById('cartModal')); updateCartCount(); }
+            };
         }
 
-        // ======================= КАТАЛОГ И ОСТАЛЬНЫЕ МОДАЛКИ =======================
+        // ======================= КАТАЛОГ (без изменений) =======================
         const products = [
             { id: "sixdays", name: "Regulmoto SIX DAYS", price: 349000, modalId: "sixDaysModal" },
             { id: "crosstrec", name: "Regulmoto CROSSTREC NB350", price: 331000, modalId: "crosstrecModal" },
             { id: "spitfire", name: "Regulmoto SPITFIRE 17/14", price: 105000, modalId: "spitfireModal" }
         ];
-
         async function renderCatalogModal() {
             const grid = document.getElementById('catalogGrid');
-            if (!grid) return;
+            if(!grid) return;
             grid.innerHTML = products.map(p => `
                 <div class="catalog-item" data-modal="${p.modalId}">
                     <h4><span class="brand">Regulmoto</span> <span class="model">${p.name.split(' ').slice(1).join(' ')}</span></h4>
@@ -657,17 +605,10 @@
                 </div>
             `).join('');
             document.querySelectorAll('.catalog-item').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('add-to-cart')) return;
-                    const modal = document.getElementById(card.dataset.modal);
-                    if (modal) openModal(modal);
-                });
+                card.onclick = (e) => { if(!e.target.classList.contains('add-to-cart')) openModal(document.getElementById(card.dataset.modal)); };
             });
             document.querySelectorAll('.add-to-cart').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price));
-                });
+                btn.onclick = (e) => { e.stopPropagation(); addToCart(btn.dataset.id, btn.dataset.name, parseInt(btn.dataset.price)); };
             });
         }
 
@@ -679,71 +620,140 @@
             `;
         }
 
+        // ======================= FIREBASE: РЕГИСТРАЦИЯ / ВХОД / ПРОФИЛЬ =======================
+        let currentFirebaseUser = null;
+
         function renderUserModal() {
-            document.getElementById('userContent').innerHTML = `
-                <div class="modal-subtitle">ВХОД</div>
-                <form id="loginForm"><div class="form-group"><input type="email" placeholder="Email" required></div><div class="form-group"><input type="password" placeholder="Пароль" required></div><button type="submit" class="submit-btn">ВОЙТИ</button></form>
-                <div class="modal-subtitle">РЕГИСТРАЦИЯ</div>
-                <form id="registerForm"><div class="form-group"><input type="text" placeholder="Имя" required></div><div class="form-group"><input type="email" placeholder="Email" required></div><div class="form-group"><input type="tel" placeholder="Телефон" required></div><div class="form-group"><input type="password" placeholder="Пароль" required></div><button type="submit" class="submit-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button></form>
-            `;
-            document.getElementById('loginForm')?.addEventListener('submit', (e) => { e.preventDefault(); alert("Демо-вход"); closeModal(document.getElementById('userModal')); });
-            document.getElementById('registerForm')?.addEventListener('submit', (e) => { e.preventDefault(); alert("Демо-регистрация"); closeModal(document.getElementById('userModal')); });
-        }
+            const container = document.getElementById('userContent');
+            const title = document.getElementById('userModalTitle');
+            if (!container) return;
 
-        function closeModal(modal) {
-            if (modal) modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+            if (currentFirebaseUser) {
+                // Если пользователь авторизован – показываем личный кабинет
+                title.innerText = '👤 ЛИЧНЫЙ КАБИНЕТ';
+                // Загружаем данные профиля из Firestore
+                (async () => {
+                    const userDoc = await window.getDoc(window.doc(window.firebaseDb, "users", currentFirebaseUser.uid));
+                    const userData = userDoc.exists() ? userDoc.data() : {};
+                    container.innerHTML = `
+                        <div class="modal-text"><strong>${userData.fullName || currentFirebaseUser.email}</strong></div>
+                        <div class="modal-text">📧 ${currentFirebaseUser.email}</div>
+                        <div class="modal-text">📞 ${userData.phone || 'не указан'}</div>
+                        <div class="modal-text">🏙️ Город: ${userData.city || 'не указан'}</div>
+                        <div class="modal-text">🏠 Адрес доставки: ${userData.address || 'не указан'}</div>
+                        <button class="submit-btn" id="firebaseLogoutBtn" style="margin-top: 20px;">🚪 ВЫЙТИ</button>
+                    `;
+                    document.getElementById('firebaseLogoutBtn')?.addEventListener('click', async () => {
+                        await window.firebaseSignOut(window.firebaseAuth);
+                        currentFirebaseUser = null;
+                        renderUserModal();
+                        alert("👋 Вы вышли из аккаунта");
+                    });
+                })();
+            } else {
+                // Форма входа / регистрации
+                title.innerText = 'ВХОД / РЕГИСТРАЦИЯ';
+                container.innerHTML = `
+                    <div class="modal-subtitle">ВХОД</div>
+                    <form id="firebaseLoginForm">
+                        <div class="form-group"><label>Email</label><input type="email" id="loginEmail" required></div>
+                        <div class="form-group"><label>Пароль</label><input type="password" id="loginPassword" required></div>
+                        <button type="submit" class="submit-btn">ВОЙТИ</button>
+                    </form>
+                    <div class="modal-subtitle" style="margin-top: 20px;">РЕГИСТРАЦИЯ</div>
+                    <form id="firebaseRegisterForm">
+                        <div class="form-group"><label>ФИО</label><input type="text" id="regFullName" required></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="regEmail" required></div>
+                        <div class="form-group"><label>Телефон</label><input type="tel" id="regPhone" required></div>
+                        <div class="form-group"><label>Город</label><input type="text" id="regCity" required></div>
+                        <div class="form-group"><label>Адрес доставки</label><input type="text" id="regAddress" required></div>
+                        <div class="form-group"><label>Пароль</label><input type="password" id="regPassword" required></div>
+                        <button type="submit" class="submit-btn">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                    </form>
+                `;
 
-        function openModal(modal) {
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                // Обработчик входа
+                document.getElementById('firebaseLoginForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+                    try {
+                        const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                        alert(`✅ Добро пожаловать, ${userCredential.user.email}!`);
+                        closeModal(document.getElementById('userModal'));
+                    } catch (error) {
+                        alert(`❌ Ошибка входа: ${error.message}`);
+                    }
+                });
+
+                // Обработчик регистрации
+                document.getElementById('firebaseRegisterForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const fullName = document.getElementById('regFullName').value;
+                    const email = document.getElementById('regEmail').value;
+                    const phone = document.getElementById('regPhone').value;
+                    const city = document.getElementById('regCity').value;
+                    const address = document.getElementById('regAddress').value;
+                    const password = document.getElementById('regPassword').value;
+
+                    try {
+                        const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                        const user = userCredential.user;
+                        // Сохраняем доп. данные в Firestore
+                        await window.setDoc(window.doc(window.firebaseDb, "users", user.uid), {
+                            fullName: fullName,
+                            phone: phone,
+                            city: city,
+                            address: address,
+                            email: email
+                        });
+                        alert(`✅ Регистрация прошла успешно! Добро пожаловать, ${fullName}!`);
+                        closeModal(document.getElementById('userModal'));
+                    } catch (error) {
+                        alert(`❌ Ошибка регистрации: ${error.message}`);
+                    }
+                });
             }
         }
 
-        // Закрытие по крестику и фону
+        // Следим за состоянием авторизации
+        window.onAuthStateChanged(window.firebaseAuth, (user) => {
+            currentFirebaseUser = user;
+            // Если модальное окно открыто, обновляем его содержимое
+            const modal = document.getElementById('userModal');
+            if (modal && modal.classList.contains('active')) {
+                renderUserModal();
+            }
+        });
+
+        // ======================= ОБЩИЕ ФУНКЦИИ ДЛЯ МОДАЛОК =======================
+        function closeModal(modal) { if(modal) modal.classList.remove('active'); document.body.style.overflow = ''; }
+        function openModal(modal) { if(modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; } }
+
         document.querySelectorAll('.modal-close').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-modal');
-                if (id) closeModal(document.getElementById(id));
-                else closeModal(btn.closest('.modal'));
-            });
+            btn.onclick = () => { const id = btn.dataset.modal; if(id) closeModal(document.getElementById(id)); else closeModal(btn.closest('.modal')); };
         });
-        document.querySelectorAll('.modal').forEach(m => {
-            m.addEventListener('click', (e) => {
-                if (e.target === m) closeModal(m);
-            });
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(m => closeModal(m));
-        });
+        document.querySelectorAll('.modal').forEach(m => { m.onclick = (e) => { if(e.target === m) closeModal(m); }; });
+        document.addEventListener('keydown', (e) => { if(e.key === 'Escape') document.querySelectorAll('.modal.active').forEach(m => closeModal(m)); });
 
-        // Навигация
-        document.getElementById('homeLink')?.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-        document.getElementById('homeLinkNav')?.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-        document.getElementById('catalogLink')?.addEventListener('click', async (e) => { e.preventDefault(); await renderCatalogModal(); openModal(document.getElementById('catalogModal')); });
-        document.getElementById('servicesLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(document.getElementById('servicesModal')); });
-        document.getElementById('eventsLink')?.addEventListener('click', (e) => { e.preventDefault(); renderEventsModal(); openModal(document.getElementById('eventsModal')); });
-        document.getElementById('aboutLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(document.getElementById('aboutModal')); });
-        document.getElementById('deliveryLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(document.getElementById('deliveryModal')); });
-        document.getElementById('contactsLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(document.getElementById('contactsModal')); });
-        document.getElementById('userIcon')?.addEventListener('click', (e) => { e.preventDefault(); renderUserModal(); openModal(document.getElementById('userModal')); });
-        document.getElementById('cartIcon')?.addEventListener('click', () => {
-            renderCartModal();
-            openModal(document.getElementById('cartModal'));
-        });
-        document.getElementById('callbackFixedBtn')?.addEventListener('click', () => openModal(document.getElementById('callbackModal')));
-        document.getElementById('btnBikes')?.addEventListener('click', async () => { await renderCatalogModal(); openModal(document.getElementById('catalogModal')); });
-        document.querySelector('.work-hours')?.addEventListener('click', () => alert("Ср-Вс 10:30–19:30, Пн-Вт выходные"));
+        // НАВИГАЦИЯ
+        document.getElementById('homeLink')?.onclick = (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); };
+        document.getElementById('homeLinkNav')?.onclick = (e) => { e.preventDefault(); window.scrollTo({top:0,behavior:'smooth'}); };
+        document.getElementById('catalogLink')?.onclick = async (e) => { e.preventDefault(); await renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
+        document.getElementById('servicesLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('servicesModal')); };
+        document.getElementById('eventsLink')?.onclick = (e) => { e.preventDefault(); renderEventsModal(); openModal(document.getElementById('eventsModal')); };
+        document.getElementById('aboutLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('aboutModal')); };
+        document.getElementById('deliveryLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('deliveryModal')); };
+        document.getElementById('contactsLink')?.onclick = (e) => { e.preventDefault(); openModal(document.getElementById('contactsModal')); };
+        document.getElementById('userIcon')?.onclick = (e) => { e.preventDefault(); renderUserModal(); openModal(document.getElementById('userModal')); };
+        document.getElementById('cartIcon')?.onclick = () => { renderCartModal(); openModal(document.getElementById('cartModal')); };
+        document.getElementById('callbackFixedBtn')?.onclick = () => openModal(document.getElementById('callbackModal'));
+        document.getElementById('btnBikes')?.onclick = async () => { await renderCatalogModal(); openModal(document.getElementById('catalogModal')); };
+        document.querySelector('.work-hours')?.onclick = () => alert("Ср-Вс 10:30–19:30, Пн-Вт выходные");
 
-        // Обработчик обратного звонка
         document.getElementById('callbackFormFixed')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('callbackNameFixed').value;
-            const phone = document.getElementById('callbackPhoneFixed').value;
-            const time = document.getElementById('callbackTimeFixed').value;
-            await sendCallbackEmail(name, phone, time);
+            await sendCallbackEmail(document.getElementById('callbackNameFixed').value, document.getElementById('callbackPhoneFixed').value, document.getElementById('callbackTimeFixed').value);
             closeModal(document.getElementById('callbackModal'));
             e.target.reset();
         });
