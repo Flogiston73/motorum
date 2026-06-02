@@ -120,7 +120,7 @@
             }
         }
 
-        /* ===== HERO: подпись строго под логотипом ===== */
+        /* ===== HERO ===== */
         .hero {
             text-align: center;
             margin-bottom: 30px;
@@ -499,7 +499,7 @@
             try {
                 const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ORDER, templateParams);
                 if (response.status === 200) {
-                    alert("✅ Заказ оформлен! Подтверждение отправлено менеджеру.");
+                    alert("Спасибо за заказ! Наш менеджер свяжется с вами в ближайшее время.");
                     return true;
                 } else {
                     throw new Error("Ошибка отправки");
@@ -517,7 +517,7 @@
             try {
                 const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CALLBACK, templateParams);
                 if (response.status === 200) {
-                    alert("✅ Заявка на обратный звонок принята! Скоро свяжемся.");
+                    alert("✅ Заявка принята! Скоро свяжемся.");
                     return true;
                 } else {
                     throw new Error();
